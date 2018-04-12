@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 using UnityEngine;
 
 
@@ -7,8 +8,8 @@ public class InputHandler : MonoBehaviour
 {
 	private class RegisteredObject {
         public GameObject GameObject { get; private set; }
-        public MonoBehaviour Behaviour { get; private set; }
-        public RegisteredObject(GameObject obj, MonoBehaviour monoBehaviour) {
+        public IInputScript Behaviour { get; private set; }
+        public RegisteredObject(GameObject obj, IInputScript monoBehaviour) {
             GameObject = obj;
             Behaviour = monoBehaviour;
         }
@@ -24,6 +25,7 @@ public class InputHandler : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        registeredObjects = new List<RegisteredObject>();
         //we could easily make a factory here, but I don't think that a new file overhead is worth
 #if !UNITY_STANDALONE
         inputManager = new TouchInputManager(MaxTouches);
@@ -39,40 +41,57 @@ public class InputHandler : MonoBehaviour
         if(inputs.Length == 0) {
             return;
         }
+
+
         foreach(InputClass input in inputs) {
-            if(input.Stage == InputStage.Start){
-                GameObject target = FindTarget(input.Position);
-                //TODO: handle inputs on target found
+            switch(input.Stage) {
+                case InputStage.Start:
+					RegisteredObject registered = FindRegisteredByInput(input.Position);
+					registered.Behaviour.OnTouchStart(input.Position);
+                    break;
+                //TODO: we have to save the current behavior so we can know what is happening with the scene
+                //we will save the object and the input id, so we will call this object even if not directly below input
+                //we also have to disable multi-touch on the same object!
+                case InputStage.Move:
+                    break;
+                case InputStage.Finish:
+                    break;
             }
         }
 	}
 
-    public void RegisterObject(GameObject gameObject, MonoBehaviour behaviour) {
+    public void RegisterObject(GameObject gameObject, IInputScript behaviour)
+    {
         RegisteredObject registered = new RegisteredObject(gameObject, behaviour);
         registeredObjects.Add(registered);
     }
-
-    private GameObject FindTarget(Vector3 position) {
-        //TODO: find the object under input on registereds
+    private RegisteredObject FindRegisteredByInput(Vector3 position)
+    {
+        return FindRegistered(FindTarget(position));
+    }
+    private RegisteredObject FindRegistered(GameObject obj) 
+    {
         foreach(RegisteredObject registered in registeredObjects) {
-            RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(position), Vector2.zero);
-            if (hitInfo) {
-                return hitInfo.transform.gameObject;
+            if(obj == registered.GameObject) {
+                return registered;
             }
         }
-        //TODO: handle correctly when not finding objects
-        throw new System.Exception("No game object found");
+        return null;
     }
-
-    private void CallOnInputStart() {
-        
-    }
-
-    private void CallOnInputMove() {
-        
-    }
-
-    private void CallOnInputFinish() {
-        
+    private GameObject FindTarget(Vector3 position) 
+    {
+        PointerEventData pointerEventData = new PointerEventData(EventSystem.current)
+        {
+            position = position
+        };
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerEventData, results);
+        GameObject result;
+        if(results.Count > 0) {
+            result = results[0].gameObject;
+        } else {
+            result = null;
+        }
+        return result;
     }
 }
