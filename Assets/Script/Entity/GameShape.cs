@@ -1,8 +1,9 @@
 using UnityEngine;
 
 public enum GameShapeType{
-    STAR = 0,
-    HEXAGON = 1,
+    TRIANGLE = 0,
+    SQUARE = 1,
+    CIRCLE = 2
 }
 
 public class GameShape

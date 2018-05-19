@@ -5,8 +5,9 @@ public class GameShapeView : MonoBehaviour
 {
 	public GameObject shapeParent;
 
-    public GameObject starPrefab;
-    public GameObject hexagonPrefab;
+    public GameObject squarePrefab;
+	public GameObject circlePrefab;
+    public GameObject trianglePrefab;
 
 	public GameShapeSpawnerController shapeSpawnerController;
     // Use this for initialization
@@ -25,10 +26,12 @@ public class GameShapeView : MonoBehaviour
     {
         switch (type)
         {
-            case GameShapeType.HEXAGON:
-                return hexagonPrefab;
-            case GameShapeType.STAR:
-                return starPrefab;
+			case GameShapeType.SQUARE:
+				return squarePrefab;
+			case GameShapeType.CIRCLE:
+				return circlePrefab;
+			case GameShapeType.TRIANGLE:
+				return trianglePrefab;
             default:
                 Debug.Log("invalid shape type");
                 return null;

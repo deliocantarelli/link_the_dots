@@ -6,10 +6,10 @@ public class GameShapeSpawnerController : MonoBehaviour
 {
 	public float startDelay;
 	public float delay;
-    private GameShapeSpawnerModel[] spawners;
+	private GameSpawner[] spawners;
 	private float speed = 5;
 	private Action<GameShape> onShapeCreated;
-	private Action<GameShapeSpawnerModel[]> onSpawnersUpdated;
+	private Action<GameSpawner[]> onSpawnersUpdated;
 	// Use this for initialization
 	void Start()
 	{
@@ -28,9 +28,9 @@ public class GameShapeSpawnerController : MonoBehaviour
     
     void SpawnShape() {
         int spawnerIndex = UnityEngine.Random.Range(0, spawners.Length);
-        GameShapeSpawnerModel spawner = spawners[spawnerIndex];
+		GameSpawner spawner = spawners[spawnerIndex];
 		GameShapeType newShapeType = spawner.GetRandomShapeType();
-		Vector3 position = spawner.GetSpawnStartPosition();
+		Vector3 position = spawner.SpawnPosition;
 		GameShape shape = new GameShape(newShapeType, position, speed);
 
 		onShapeCreated(shape);
@@ -39,20 +39,29 @@ public class GameShapeSpawnerController : MonoBehaviour
 
     private void SetSpawnersConfig()
     {
-        Vector3 vector3 = Vector3.zero;
-		GameShapeType[] types = { GameShapeType.HEXAGON, GameShapeType.STAR };
-        GameShapeSpawnerModel spawnerModel = new GameShapeSpawnerModel(types, vector3);
+		Vector3 vector3 = new Vector3(0.0f, 3,0);
+		GameShapeType[] types = { GameShapeType.CIRCLE, GameShapeType.SQUARE, GameShapeType.TRIANGLE };
+		GameSpawner spawnerModel1 = new GameSpawner(types, vector3);
+        vector3 = new Vector3(1.6f, 3, 0);
+        
+		GameSpawner spawnerModel2 = new GameSpawner(types, vector3);
+        vector3 = new Vector3(-1.6f, 3, 0);
+        
+		GameSpawner spawnerModel3 = new GameSpawner(types, vector3);
 
-		GameShapeSpawnerModel[] spawnersModel = { spawnerModel };
+		GameSpawner[] spawnersModel = { spawnerModel1, spawnerModel2, spawnerModel3 };
 		spawners = spawnersModel;
-		onSpawnersUpdated(spawners);
+
+		if(onSpawnersUpdated != null) {
+			onSpawnersUpdated(spawners);
+        }
 
 		InvokeRepeating("SpawnShape", startDelay, delay);
     }
 	public void RegisterOnShapeCretedCB(Action<GameShape> action) {
 		onShapeCreated += action;
 	}
-	public GameShapeSpawnerModel[] RegisterOnSpawnersUpdated(Action<GameShapeSpawnerModel[]> action) {
+	public GameSpawner[] RegisterOnSpawnersUpdated(Action<GameSpawner[]> action) {
 		onSpawnersUpdated += action;
 
         //be aware that this can return null if not initialized yet

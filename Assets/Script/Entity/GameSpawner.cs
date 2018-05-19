@@ -3,12 +3,17 @@ using UnityEngine;
 
 public class GameSpawner
 {
-    public GameShapeType[] spawnTypes;
-    public Vector3 spawnPosition;
+	public GameShapeType[] SpawnTypes { get; private set; }
+	public Vector3 SpawnPosition { get; private set; }
 
 	public GameSpawner(GameShapeType[] spawnTypes, Vector3 spawnPosition)
     {
-		this.spawnTypes = spawnTypes;
-		this.spawnPosition = spawnPosition;
+		this.SpawnTypes = spawnTypes;
+		this.SpawnPosition = spawnPosition;
+	}
+    public GameShapeType GetRandomShapeType()
+    {
+		int index = UnityEngine.Random.Range(0, SpawnTypes.Length);
+		return SpawnTypes[index];
     }
 }

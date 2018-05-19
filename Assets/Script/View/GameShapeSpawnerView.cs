@@ -12,7 +12,7 @@ public class GameShapeSpawnerView : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-		GameShapeSpawnerModel[] gameShapeSpawners = spawnerController.RegisterOnSpawnersUpdated(OnSpawnersUpdated);
+		GameSpawner[] gameShapeSpawners = spawnerController.RegisterOnSpawnersUpdated(OnSpawnersUpdated);
 		if(gameShapeSpawners != null) {
 			OnSpawnersUpdated(gameShapeSpawners);
 		}
@@ -24,7 +24,7 @@ public class GameShapeSpawnerView : MonoBehaviour
 
     }
 
-	void OnSpawnersUpdated(GameShapeSpawnerModel[] spawners) {
+	void OnSpawnersUpdated(GameSpawner[] spawners) {
 		if(spawnerObjects != null) {
 			foreach (GameObject spawner in spawnerObjects) {
 				Destroy(spawner);
@@ -32,13 +32,13 @@ public class GameShapeSpawnerView : MonoBehaviour
         }
 		spawnerObjects = new GameObject[spawners.Length];
 		for (int i = 0; i < spawners.Length; i ++) {
-			GameShapeSpawnerModel spawn = spawners[i];
+			GameSpawner spawn = spawners[i];
 			spawnerObjects[i] = CreateSpawnerObject(spawn);
 		}
 	}
 
-	GameObject CreateSpawnerObject(GameShapeSpawnerModel spawner) {
-		GameObject spawnerObj = Instantiate(spawnerPrefab, spawner.GetSpawnStartPosition(), Quaternion.identity);
+	GameObject CreateSpawnerObject(GameSpawner spawner) {
+		GameObject spawnerObj = Instantiate(spawnerPrefab, spawner.SpawnPosition, Quaternion.identity);
 		spawnerObj.transform.parent = spawnersParent.transform;
 		return spawnerObj;
 	}
