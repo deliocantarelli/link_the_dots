@@ -13,7 +13,6 @@ public class GameShapeSpawnerController : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		SetSpawnersConfig();
 	}
 
 	// Update is called once per frame
@@ -37,15 +36,15 @@ public class GameShapeSpawnerController : MonoBehaviour
     }
 
 
-    private void SetSpawnersConfig()
+    public void SetSpawnersConfig()
     {
 		Vector3 vector3 = new Vector3(0.0f, 3,0);
 		GameShapeType[] types = { GameShapeType.CIRCLE, GameShapeType.SQUARE, GameShapeType.TRIANGLE };
 		GameSpawner spawnerModel1 = new GameSpawner(types, vector3);
-        vector3 = new Vector3(1.6f, 3, 0);
+        vector3 = new Vector3(2f, 3, 0);
         
 		GameSpawner spawnerModel2 = new GameSpawner(types, vector3);
-        vector3 = new Vector3(-1.6f, 3, 0);
+        vector3 = new Vector3(-2f, 3, 0);
         
 		GameSpawner spawnerModel3 = new GameSpawner(types, vector3);
 
@@ -58,6 +57,9 @@ public class GameShapeSpawnerController : MonoBehaviour
 
 		InvokeRepeating("SpawnShape", startDelay, delay);
     }
+	public GameSpawner[] GetSpawners() {
+		return spawners;
+	}
 	public void RegisterOnShapeCretedCB(Action<GameShape> action) {
 		onShapeCreated += action;
 	}

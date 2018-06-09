@@ -9,7 +9,6 @@ public class GameEndPipeController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-		SetEndPipeConfig();
     }
 
     // Update is called once per frame
@@ -18,15 +17,15 @@ public class GameEndPipeController : MonoBehaviour
 
     }
 
-	void SetEndPipeConfig() {
+	public void SetEndPipeConfig() {
 		GameShapeType type = GameShapeType.CIRCLE;
-        Vector3 vector3 = new Vector3(0.0f, -2.8f, 0);
+        Vector3 vector3 = new Vector3(0f, -3f, 0);
 		GamePipeEnd pipeEnd1 = new GamePipeEnd(type, vector3);
-        vector3 = new Vector3(-2f, -2.8f, 0);
+		vector3 = new Vector3(2f, -3f, 0);
 
-		type = GameShapeType.SQUARE;
-		GamePipeEnd pipeEnd2 = new GamePipeEnd(type, vector3);
-        vector3 = new Vector3(2f, -2.8f, 0);
+        type = GameShapeType.SQUARE;
+        GamePipeEnd pipeEnd2 = new GamePipeEnd(type, vector3);
+		vector3 = new Vector3(-2f, -3f, 0);
 
 		type = GameShapeType.TRIANGLE;
 		GamePipeEnd pipeEnd3 = new GamePipeEnd(type, vector3);
@@ -38,7 +37,9 @@ public class GameEndPipeController : MonoBehaviour
 			onPipeEndsUpdated(pipeEnds);
         }
 	}
-    
+	public GamePipeEnd[] GetPipeEnds() {
+		return pipeEnds;
+	}
 	public GamePipeEnd[] RegisterOnPipeEndsUpdated(Action<GamePipeEnd[]> action) {
 		onPipeEndsUpdated += action;
 

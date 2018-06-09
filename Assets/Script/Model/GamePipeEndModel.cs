@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GamePipeEndModel : MonoBehaviour
 {
-	GamePipeEnd pipeEnd;
+	//GamePipeEnd pipeEnd;
     // Use this for initialization
     void Start()
     {
@@ -16,7 +16,7 @@ public class GamePipeEndModel : MonoBehaviour
 
     }
 	void SetPipeEnd(GameShapeType type, Vector3 position) {
-		pipeEnd = new GamePipeEnd(type, position);
+		//pipeEnd = new GamePipeEnd(type, position);
 	}
     
 
