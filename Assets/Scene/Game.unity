@@ -141,6 +141,7 @@ RectTransform:
   - {fileID: 284736372}
   - {fileID: 1569860901}
   - {fileID: 2113832416}
+  - {fileID: 517557147}
   m_Father: {fileID: 1839114553}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -194,7 +195,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 121047f41768945f88c1c89623487aab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  endPipeController: {fileID: 2113832417}
   spawnerController: {fileID: 1569860902}
+  plumbingController: {fileID: 517557148}
 --- !u!1 &355723481
 GameObject:
   m_ObjectHideFlags: 0
@@ -225,6 +228,51 @@ Transform:
   m_Father: {fileID: 1839114553}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &517557146
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 517557147}
+  - component: {fileID: 517557148}
+  m_Layer: 5
+  m_Name: PlumbingController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &517557147
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 517557146}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 179166917}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -0.0000076293945, y: -0.0000076293945}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &517557148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 517557146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f2435074d5c4d3e90346414234480a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &721587194
 GameObject:
   m_ObjectHideFlags: 0
@@ -483,6 +531,7 @@ RectTransform:
   - {fileID: 831640941}
   - {fileID: 792639031}
   - {fileID: 773794629}
+  - {fileID: 1451901648}
   m_Father: {fileID: 1839114553}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -649,6 +698,54 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1327369863}
+--- !u!1 &1451901647
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1451901648}
+  - component: {fileID: 1451901649}
+  m_Layer: 5
+  m_Name: PlumbingView
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1451901648
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1451901647}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 902809905}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0000038146973, y: -0.0000038146973}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1451901649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1451901647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3d6513d268414bd998b50537963e1d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pipeParent: {fileID: 1451901647}
+  gamePlumbingController: {fileID: 517557148}
+  pipePrefab: {fileID: 1278559512636262, guid: 674c69b3640de4c92b71c56367aeb538, type: 2}
 --- !u!1 &1464975696
 GameObject:
   m_ObjectHideFlags: 0
@@ -790,8 +887,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e55c1b048ff448c4b093dcf32367f5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startDelay: 1
-  delay: 0.5
+  startDelay: 0.2
+  delay: 2
 --- !u!1 &1703433964
 GameObject:
   m_ObjectHideFlags: 0
