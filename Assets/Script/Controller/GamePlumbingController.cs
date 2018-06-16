@@ -4,8 +4,9 @@ using System.Collections;
 
 public class GamePlumbingController : MonoBehaviour
 {
-	private ArrayList pipes;
-	private Action<GamePipe> onPipeAdded;
+	public GamePipeEndController pipeEndController;
+    private ArrayList pipes;
+    private Action<GamePipe> onPipeAdded;
     // Use this for initialization
     void Start()
     {
@@ -28,7 +29,9 @@ public class GamePlumbingController : MonoBehaviour
 	private GamePipe AddPipe(GameSpawner spawner, GamePipeEnd end) {
 		GamePipe newPipe = new GamePipe(spawner, end);
         pipes.Add(newPipe);
-        onPipeAdded(newPipe);
+		if(onPipeAdded != null) {
+			onPipeAdded(newPipe);
+        }
 		return newPipe;
 	}
 

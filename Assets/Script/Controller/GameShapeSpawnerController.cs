@@ -10,15 +10,19 @@ public class GameShapeSpawnerController : MonoBehaviour
 	private float speed = 5;
 	private Action<GameShape> onShapeCreated;
 	private Action<GameSpawner[]> onSpawnersUpdated;
+	private ArrayList gameShapes;
 	// Use this for initialization
 	void Start()
 	{
+		gameShapes = new ArrayList();
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
-		
+		foreach(GameShape shape in gameShapes) {
+			shape.UpdatePosition(Time.deltaTime);
+		}
 	}
 
 	void LoadLevelConfig() {
@@ -31,8 +35,12 @@ public class GameShapeSpawnerController : MonoBehaviour
 		GameShapeType newShapeType = spawner.GetRandomShapeType();
 		Vector3 position = spawner.SpawnPosition;
 		GameShape shape = new GameShape(newShapeType, position, speed);
+		gameShapes.Add(shape);
 
-		onShapeCreated(shape);
+		if(onShapeCreated != null) {
+			onShapeCreated(shape);
+        }
+
     }
 
 

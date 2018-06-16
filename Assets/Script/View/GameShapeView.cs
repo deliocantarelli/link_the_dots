@@ -3,38 +3,33 @@ using System.Collections;
 
 public class GameShapeView : MonoBehaviour
 {
-	public GameObject shapeParent;
-
-    public GameObject squarePrefab;
-	public GameObject circlePrefab;
-    public GameObject trianglePrefab;
-
-	public GameShapeSpawnerController shapeSpawnerController;
+	GamePipeView pipeView;
     // Use this for initialization
     void Start()
     {
-		shapeSpawnerController.RegisterOnShapeCretedCB(OnShapeCreated);
+
     }
 
-	void OnShapeCreated(GameShape shape) {
-		GameObject shapeObj = GetShapePrefab(shape.Type);
-		shapeObj = Instantiate(shapeObj, shape.Position, Quaternion.identity);
-		shapeObj.transform.SetParent(shapeParent.transform);
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+	private void OnPositionUpdated(float newPosition) {
+		Debug.Log(newPosition);
+		gameObject.transform.position = pipeView.GetPercentualPosition(newPosition);
 	}
 
-    private GameObject GetShapePrefab(GameShapeType type)
-    {
-        switch (type)
-        {
-			case GameShapeType.SQUARE:
-				return squarePrefab;
-			case GameShapeType.CIRCLE:
-				return circlePrefab;
-			case GameShapeType.TRIANGLE:
-				return trianglePrefab;
-            default:
-                Debug.Log("invalid shape type");
-                return null;
-        }
-    }
+	private void InitShapeView(GameShape gameShape, GamePipeView pipeAttached) {
+		gameShape.RegisterOnPositionUpdated(OnPositionUpdated);
+		pipeView = pipeAttached;
+	}
+    
+	public static void CreateShape(GameObject shapePrefab, GameShape shape, GameObject parent, GamePipeView pipeAttached) {
+		GameObject shapeObj = Instantiate(shapePrefab, shape.Position, Quaternion.identity);
+		shapeObj.transform.SetParent(parent.transform);
+		GameShapeView shapeView = shapeObj.AddComponent<GameShapeView>();
+		shapeView.InitShapeView(shape, pipeAttached);
+	}
 }

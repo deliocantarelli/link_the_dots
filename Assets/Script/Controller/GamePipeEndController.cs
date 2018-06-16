@@ -2,10 +2,10 @@
 using System.Collections;
 using System;
 
-public class GameEndPipeController : MonoBehaviour
+public class GamePipeEndController : MonoBehaviour
 {
 	private GamePipeEnd[] pipeEnds;
-	private Action<GamePipeEnd[]> onPipeEndsUpdated;
+	private Action<GamePipeEnd> onPipeEndAdded;
     // Use this for initialization
     void Start()
     {
@@ -33,16 +33,16 @@ public class GameEndPipeController : MonoBehaviour
 		GamePipeEnd[] pipeEndArray = { pipeEnd1, pipeEnd2, pipeEnd3 };
 		pipeEnds = pipeEndArray;
 
-		if(onPipeEndsUpdated != null) {
-			onPipeEndsUpdated(pipeEnds);
+		if(onPipeEndAdded != null) {
+			foreach(GamePipeEnd pipeEnd in pipeEndArray) {
+				onPipeEndAdded(pipeEnd);
+            }
         }
 	}
 	public GamePipeEnd[] GetPipeEnds() {
 		return pipeEnds;
 	}
-	public GamePipeEnd[] RegisterOnPipeEndsUpdated(Action<GamePipeEnd[]> action) {
-		onPipeEndsUpdated += action;
-
-		return this.pipeEnds;
+	public void RegisterOnPipeEndAdded(Action<GamePipeEnd> action) {
+		onPipeEndAdded += action;
 	}
 }

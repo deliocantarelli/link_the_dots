@@ -4,7 +4,7 @@ using System;
 
 public class GameController : MonoBehaviour
 {
-	public GameEndPipeController endPipeController;
+	public GamePipeEndController endPipeController;
 	public GameShapeSpawnerController spawnerController;
 	public GamePlumbingController plumbingController;
 

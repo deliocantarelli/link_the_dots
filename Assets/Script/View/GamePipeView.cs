@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 public class GamePipeView : EventTrigger
@@ -71,7 +72,26 @@ public class GamePipeView : EventTrigger
     }
 
     public override void OnEndDrag (PointerEventData eventData) {
-		Vector3 position = Camera.main.ScreenToWorldPoint(eventData.position);
-        UpdatePipe(origin, last);
+        List<RaycastResult> results = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(eventData, results);
+		bool hasFound = false;
+		foreach(RaycastResult result in results) {
+			GamePipeEndView pipeEnd = result.gameObject.GetComponent<GamePipeEndView>();
+			Debug.Log(result.gameObject.name);
+			if (pipeEnd != null){
+				Vector3 newPosition = pipeEnd.gameObject.transform.position;
+                UpdatePipe(origin, newPosition);
+				last = newPosition;
+				hasFound = true;
+				break;
+			}
+		}
+		if(!hasFound) {
+			UpdatePipe(origin, last);
+        }
+	}
+    
+	public Vector3 GetPercentualPosition(float percentual) {
+		return Vector3.Lerp(origin, last, percentual);
 	}
 }
