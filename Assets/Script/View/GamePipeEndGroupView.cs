@@ -1,24 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GamePipeEndView : MonoBehaviour
+public class GamePipeEndGroupView : MonoBehaviour
 {
 	public GameObject pipeEndParent;
 
-	public GameEndPipeController gameEndPipeController;
+	public GamePipeEndController gameEndPipeController;
     
     public GameObject bottomCircle;
     public GameObject bottomSquare;
     public GameObject bottomTriangle;
-	private GameObject[] pipeEndObjects;
     // Use this for initialization
     void Start()
     {
-
-		GamePipeEnd[] gamePipeEnds = gameEndPipeController.RegisterOnPipeEndsUpdated(OnPipeEndUpdated);
+        
+		gameEndPipeController.RegisterOnPipeEndAdded(OnPipeEndAdded);
+		GamePipeEnd[] gamePipeEnds = gameEndPipeController.GetPipeEnds();
 		if (gamePipeEnds != null)
         {
-			OnPipeEndUpdated(gamePipeEnds);
+			foreach(GamePipeEnd gamePipeEnd in gamePipeEnds) {
+				OnPipeEndAdded(gamePipeEnd);
+            }
         }
     }
 
@@ -27,28 +29,10 @@ public class GamePipeEndView : MonoBehaviour
     {
 
     }
-
-	private void OnPipeEndUpdated(GamePipeEnd[] pipeEnds) {
-		if (pipeEndObjects != null)
-        {
-			foreach (GameObject pipeEnd in pipeEndObjects)
-            {
-				Destroy(pipeEnd);
-            }
-        }
-		pipeEndObjects = new GameObject[pipeEnds.Length];
-		for (int i = 0; i < pipeEnds.Length; i++)
-        {
-			GamePipeEnd pipeEnd = pipeEnds[i];
-			pipeEndObjects[i] = CreatePipeEndObject(pipeEnd);
-        }
-	}
-   
-	private GameObject CreatePipeEndObject(GamePipeEnd pipeEnd) {
-		GameObject pipeEndObj = GetPipeEndPrefab(pipeEnd.Type);
-		pipeEndObj = Instantiate(pipeEndObj, pipeEnd.Position, Quaternion.identity);
-        pipeEndObj.transform.parent = pipeEndParent.transform;
-		return pipeEndObj;
+    
+	private void OnPipeEndAdded(GamePipeEnd pipeEnd) {
+		GameObject prefab = GetPipeEndPrefab(pipeEnd.Type);
+		GamePipeEndView.CreatePipeEnd(prefab, pipeEndParent, pipeEnd);
 	}
 
     private GameObject GetPipeEndPrefab(GameShapeType type)

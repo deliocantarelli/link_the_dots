@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameShapeView : MonoBehaviour
+public class GameShapeGroupView : MonoBehaviour
 {
 	public GameObject shapeParent;
 
