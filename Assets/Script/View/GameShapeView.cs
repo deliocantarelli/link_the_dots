@@ -3,7 +3,6 @@ using System.Collections;
 
 public class GameShapeView : MonoBehaviour
 {
-	GamePipeView pipeView;
     // Use this for initialization
     void Start()
     {
@@ -16,20 +15,18 @@ public class GameShapeView : MonoBehaviour
 
     }
 
-	private void OnPositionUpdated(float newPosition) {
-		Debug.Log(newPosition);
-		gameObject.transform.position = pipeView.GetPercentualPosition(newPosition);
+	private void OnPositionUpdated(Vector3 newPosition) {
+		gameObject.transform.position = newPosition;
 	}
 
-	private void InitShapeView(GameShape gameShape, GamePipeView pipeAttached) {
+	private void InitShapeView(GameShape gameShape) {
 		gameShape.RegisterOnPositionUpdated(OnPositionUpdated);
-		pipeView = pipeAttached;
 	}
     
-	public static void CreateShape(GameObject shapePrefab, GameShape shape, GameObject parent, GamePipeView pipeAttached) {
+	public static void CreateShape(GameObject shapePrefab, GameShape shape, GameObject parent) {
 		GameObject shapeObj = Instantiate(shapePrefab, shape.Position, Quaternion.identity);
 		shapeObj.transform.SetParent(parent.transform);
 		GameShapeView shapeView = shapeObj.AddComponent<GameShapeView>();
-		shapeView.InitShapeView(shape, pipeAttached);
+		shapeView.InitShapeView(shape);
 	}
 }

@@ -32,13 +32,16 @@ public class GameShapeSpawnerController : MonoBehaviour
     void SpawnShape() {
         int spawnerIndex = UnityEngine.Random.Range(0, spawners.Length);
 		GameSpawner spawner = spawners[spawnerIndex];
-		GameShapeType newShapeType = spawner.GetRandomShapeType();
-		Vector3 position = spawner.SpawnPosition;
-		GameShape shape = new GameShape(newShapeType, position, speed);
-		gameShapes.Add(shape);
-
-		if(onShapeCreated != null) {
-			onShapeCreated(shape);
+		if (spawners[spawnerIndex].AttachedPipe != null)
+        {
+			GameShapeType newShapeType = spawner.GetRandomShapeType();
+			Vector3 position = spawner.SpawnPosition;
+			GameShape shape = new GameShape(newShapeType, position, speed, spawner.AttachedPipe);
+			gameShapes.Add(shape);
+			
+			if(onShapeCreated != null) {
+				onShapeCreated(shape);
+			}
         }
 
     }
@@ -76,5 +79,8 @@ public class GameShapeSpawnerController : MonoBehaviour
 
         //be aware that this can return null if not initialized yet
 		return spawners;
+	}
+	public void AttachPipeToSpawner(GamePipe pipe, GameSpawner spawner) {
+		spawner.AttachPipe(pipe);
 	}
 }

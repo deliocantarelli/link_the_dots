@@ -17,9 +17,7 @@ public class GameShapeGroupView : MonoBehaviour
     }
 
 	void OnShapeCreated(GameShape shape) {
-		GameObject shapeObj = GetShapePrefab(shape.Type);
-		shapeObj = Instantiate(shapeObj, shape.Position, Quaternion.identity);
-		shapeObj.transform.SetParent(shapeParent.transform);
+		GameShapeView.CreateShape(GetShapePrefab(shape.Type), shape, shapeParent);
 	}
 
     private GameObject GetShapePrefab(GameShapeType type)

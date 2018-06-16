@@ -27,6 +27,6 @@ public class GamePlumbingView : MonoBehaviour
 
     void AddPipe(GamePipe pipe)
     {
-		GamePipeView.CreatePipe(pipePrefab, pipe, pipeParent);
+		GamePipeView.CreatePipe(pipePrefab, pipe, pipeParent, gamePlumbingController);
     }
 }

@@ -5,6 +5,7 @@ using System.Collections;
 public class GamePlumbingController : MonoBehaviour
 {
 	public GamePipeEndController pipeEndController;
+	public GameShapeSpawnerController spawnerController;
     private ArrayList pipes;
     private Action<GamePipe> onPipeAdded;
     // Use this for initialization
@@ -22,12 +23,14 @@ public class GamePlumbingController : MonoBehaviour
         int length = spawners.Length;
 		pipes = new ArrayList(length);
 		for (int x = 0; x < length; x ++) {
-			AddPipe(spawners[x], ends[x]);
+			GamePipe pipe = AddPipe(spawners[x], ends[x]);
+
+			spawnerController.AttachPipeToSpawner(pipe, spawners[x]);
 		}
 	}
 
 	private GamePipe AddPipe(GameSpawner spawner, GamePipeEnd end) {
-		GamePipe newPipe = new GamePipe(spawner, end);
+		GamePipe newPipe = new GamePipe(spawner.SpawnPosition, end.Position);
         pipes.Add(newPipe);
 		if(onPipeAdded != null) {
 			onPipeAdded(newPipe);
@@ -35,7 +38,7 @@ public class GamePlumbingController : MonoBehaviour
 		return newPipe;
 	}
 
-	private void UpdatePipeEnd(GamePipe pipe, GamePipeEnd pipeEnd) {
+	public void UpdatePipeEnd(GamePipe pipe, Vector3 pipeEnd) {
 		pipe.UpdateGamePipeEnd(pipeEnd);
 	}
 

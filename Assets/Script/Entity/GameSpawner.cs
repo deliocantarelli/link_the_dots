@@ -5,6 +5,7 @@ public class GameSpawner
 {
 	public GameShapeType[] SpawnTypes { get; private set; }
 	public Vector3 SpawnPosition { get; private set; }
+	public GamePipe AttachedPipe { get; private set; }
 
 	public GameSpawner(GameShapeType[] spawnTypes, Vector3 spawnPosition)
     {
@@ -16,4 +17,7 @@ public class GameSpawner
 		int index = UnityEngine.Random.Range(0, SpawnTypes.Length);
 		return SpawnTypes[index];
     }
+	public void AttachPipe(GamePipe pipe) {
+		AttachedPipe = pipe;
+	}
 }
