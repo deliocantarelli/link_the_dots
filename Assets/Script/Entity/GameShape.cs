@@ -16,6 +16,7 @@ public class GameShape
 	public GamePipe Pipe { get; private set; }
 
 	private Action<Vector3> onGameShapePositionUpdated;
+	private Action<GameShape, Vector3> onGameShapeFinished;
 
 	public GameShape(GameShapeType type, Vector3 initialPosition, float speed, GamePipe attachedPipe) {
 		this.Type = type;
@@ -24,15 +25,30 @@ public class GameShape
 		Pipe = attachedPipe;
 	}
 
-	public void UpdatePosition(float dt) {
+	public float UpdatePosition(float dt) {
 		float distanceTraveled = dt * Speed;
 		PercentualTraveled += distanceTraveled;
 		Vector3 newPosition = Pipe.GetPercentualPosition(PercentualTraveled);
-		if(onGameShapePositionUpdated != null) {
+		if(PercentualTraveled >= 1) {
+			if(onGameShapeFinished != null) {
+				onGameShapeFinished(this, newPosition);
+            }
+		}
+		else if(onGameShapePositionUpdated != null) {
 			onGameShapePositionUpdated(newPosition);
 		}
+		return PercentualTraveled;
 	}
 	public void RegisterOnPositionUpdated(Action<Vector3> action) {
 		onGameShapePositionUpdated += action;
+	}
+	public void RegisterOnShapeFinished(Action<GameShape, Vector3> action) {
+		onGameShapeFinished += action;
+	}
+	public void RemoveOnShapeFinished(Action<GameShape, Vector3> action) {
+		onGameShapeFinished -= action;
+	}
+	public void RemoveOnPositionUpdated(Action<Vector3> action) {
+		onGameShapePositionUpdated -= action;
 	}
 }

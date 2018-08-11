@@ -6,13 +6,16 @@ using UnityEngine.EventSystems;
 public class GamePipeView : EventTrigger
 {   
 	public GamePlumbingController gamePlumbingController;
+	public GamePlumbingDragView gamePlumbingDragView;
     
     public GameObject pipePrefab;
+	public GameObject pipeDragPrefab;
 
 	//erase origin, correct updatePipe as it is just temporary
 	private GamePipe updatedPipe;
 	private Vector3 origin;
 	private Vector3 last;
+
     // Use this for initialization
     void Start()
     {
@@ -24,15 +27,16 @@ public class GamePipeView : EventTrigger
     {
 
     }
-	public static void CreatePipe(GameObject pipePrefab, GamePipe pipeDef, GameObject parent, GamePlumbingController plumbingController) {
+	public static void CreatePipe(GameObject pipePrefab, GamePipe pipeDef, GameObject parent, GamePlumbingController plumbingController, GamePlumbingDragView plumbingDragView) {
 		Vector3 position = pipeDef.StartPoint;
 		GameObject newPipeObject = Instantiate(pipePrefab, position, Quaternion.identity);
 		newPipeObject.transform.SetParent(parent.transform);
 		GamePipeView component = newPipeObject.AddComponent<GamePipeView>();
-		component.InitView(pipeDef, plumbingController);
+		component.InitView(pipeDef, plumbingController, plumbingDragView);
 	}
-	private void InitView(GamePipe pipe, GamePlumbingController plumbingController) {
+	private void InitView(GamePipe pipe, GamePlumbingController plumbingController, GamePlumbingDragView plumbingDragView) {
         pipe.RegisterOnPipeUpdated(OnPipeUpdated);
+		gamePlumbingDragView = plumbingDragView;
 		gamePlumbingController = plumbingController;
         OnPipeUpdated(pipe);
     }
@@ -56,31 +60,36 @@ public class GamePipeView : EventTrigger
         rectTrans.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size);
 
 		rectTrans.SetPositionAndRotation(rectTrans.position, Quaternion.Euler(0,0,angleDeg + 90));
-        //rectTrans.Rotate(0, 0, angleDeg + 90);
 	}
     
 	public override void OnDrag (PointerEventData eventData)
     {
 		Vector3 position = Camera.main.ScreenToWorldPoint(eventData.position);
-        UpdatePipe(origin, position);
+		int id = eventData.pointerId;
+		Debug.Log(id);
+		GamePipeDragView dragView = gamePlumbingDragView.GetPipeDrag(id);
+		if(!dragView.gameObject.activeSelf) {
+			dragView.StartPipeDrag(updatedPipe);
+		}
+		dragView.UpdatePipeDrag(position);
     }
 
     public override void OnEndDrag (PointerEventData eventData) {
         List<RaycastResult> results = new List<RaycastResult>();
 		EventSystem.current.RaycastAll(eventData, results);
-		bool hasFound = false;
 		foreach(RaycastResult result in results) {
 			GamePipeEndView pipeEnd = result.gameObject.GetComponent<GamePipeEndView>();
 			if (pipeEnd != null){
 				Vector3 newPosition = pipeEnd.gameObject.transform.position;
 				UpdatePipeEnd(newPosition);
-				hasFound = true;
 				break;
 			}
 		}
-		if(!hasFound) {
-			UpdatePipe(origin, last);
-        }
+        int id = eventData.pointerId;
+        GamePipeDragView dragView = gamePlumbingDragView.GetPipeDrag(id);
+		if(dragView.gameObject.activeSelf) {
+			dragView.StopPipeDrag();
+		}
 	}
     
 }

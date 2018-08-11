@@ -6,6 +6,7 @@ public class GamePlumbingView : MonoBehaviour
     public GameObject pipeParent;
 
 	public GamePlumbingController gamePlumbingController;
+	public GamePlumbingDragView gamePlumbingDragView;
 
     public GameObject pipePrefab;
     // Use this for initialization
@@ -27,6 +28,6 @@ public class GamePlumbingView : MonoBehaviour
 
     void AddPipe(GamePipe pipe)
     {
-		GamePipeView.CreatePipe(pipePrefab, pipe, pipeParent, gamePlumbingController);
+		GamePipeView.CreatePipe(pipePrefab, pipe, pipeParent, gamePlumbingController, gamePlumbingDragView);
     }
 }
