@@ -30,7 +30,7 @@ public class GamePlumbingController : MonoBehaviour
 	}
 
 	private GamePipe AddPipe(GameSpawner spawner, GamePipeEnd end) {
-		GamePipe newPipe = new GamePipe(spawner.SpawnPosition, end.Position);
+		GamePipe newPipe = new GamePipe(spawner.SpawnPosition, end.Position, end.Type);
         pipes.Add(newPipe);
 		if(onPipeAdded != null) {
 			onPipeAdded(newPipe);
@@ -38,8 +38,8 @@ public class GamePlumbingController : MonoBehaviour
 		return newPipe;
 	}
 
-	public void UpdatePipeEnd(GamePipe pipe, Vector3 pipeEnd) {
-		pipe.UpdateGamePipeEnd(pipeEnd);
+	public void UpdatePipeEnd(GamePipe pipe, Vector3 pipeEnd, GameShapeType newEndType) {
+		pipe.UpdateGamePipeEnd(pipeEnd, newEndType);
 	}
 
 	public ArrayList RegisterOnPipesAdded(Action<GamePipe> action)

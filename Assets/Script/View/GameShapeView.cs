@@ -18,11 +18,11 @@ public class GameShapeView : MonoBehaviour
 	private void OnPositionUpdated(Vector3 newPosition) {
 		gameObject.transform.position = newPosition;
 	}
-	private void OnGameShapeFinished(GameShape shape, Vector3 newPosition) {
+	private void OnGameShapeFinished(GameShape shape, Vector3 newPosition, bool isCorrect) {
 		gameObject.transform.position = newPosition;
-		Destroy(this);
-		shape.RemoveOnShapeFinished(OnGameShapeFinished);
-		shape.RemoveOnPositionUpdated(OnPositionUpdated);
+        shape.RemoveOnShapeFinished(OnGameShapeFinished);
+        shape.RemoveOnPositionUpdated(OnPositionUpdated);
+		//Destroy(gameObject);
 	}
 
 	private void InitShapeView(GameShape gameShape) {

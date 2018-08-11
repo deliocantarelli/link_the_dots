@@ -46,9 +46,9 @@ public class GamePipeView : EventTrigger
         last = pipe.CurrentEnd;
 		UpdatePipe(origin, last);
     }
-    private void UpdatePipeEnd(Vector3 position) {
+	private void UpdatePipeEnd(Vector3 position, GameShapeType newEndType) {
         UpdatePipe(origin, position);
-        gamePlumbingController.UpdatePipeEnd(updatedPipe, position);
+		gamePlumbingController.UpdatePipeEnd(updatedPipe, position, newEndType);
     }
 
 	private void UpdatePipe(Vector3 start, Vector3 position) {
@@ -81,7 +81,7 @@ public class GamePipeView : EventTrigger
 			GamePipeEndView pipeEnd = result.gameObject.GetComponent<GamePipeEndView>();
 			if (pipeEnd != null){
 				Vector3 newPosition = pipeEnd.gameObject.transform.position;
-				UpdatePipeEnd(newPosition);
+				UpdatePipeEnd(newPosition, pipeEnd.EndType);
 				break;
 			}
 		}
