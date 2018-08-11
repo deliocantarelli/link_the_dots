@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 222518882950587132}
   - component: {fileID: 114835873469427032}
   m_Layer: 5
-  m_Name: Pipe
+  m_Name: PipeDrag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
