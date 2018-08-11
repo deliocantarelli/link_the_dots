@@ -273,7 +273,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5f2435074d5c4d3e90346414234480a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pipeEndController: {fileID: 0}
+  pipeEndController: {fileID: 2113832417}
+  spawnerController: {fileID: 1569860902}
 --- !u!1 &721587194
 GameObject:
   m_ObjectHideFlags: 0

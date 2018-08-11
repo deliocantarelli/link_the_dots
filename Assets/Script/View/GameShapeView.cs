@@ -18,9 +18,16 @@ public class GameShapeView : MonoBehaviour
 	private void OnPositionUpdated(Vector3 newPosition) {
 		gameObject.transform.position = newPosition;
 	}
+	private void OnGameShapeFinished(GameShape shape, Vector3 newPosition) {
+		gameObject.transform.position = newPosition;
+		Destroy(this);
+		shape.RemoveOnShapeFinished(OnGameShapeFinished);
+		shape.RemoveOnPositionUpdated(OnPositionUpdated);
+	}
 
 	private void InitShapeView(GameShape gameShape) {
 		gameShape.RegisterOnPositionUpdated(OnPositionUpdated);
+		gameShape.RegisterOnShapeFinished(OnGameShapeFinished);
 	}
     
 	public static void CreateShape(GameObject shapePrefab, GameShape shape, GameObject parent) {

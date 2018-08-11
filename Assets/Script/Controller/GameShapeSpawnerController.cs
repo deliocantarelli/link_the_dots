@@ -7,7 +7,7 @@ public class GameShapeSpawnerController : MonoBehaviour
 	public float startDelay;
 	public float delay;
 	private GameSpawner[] spawners;
-	private float speed = 5;
+	private float speed = 1;
 	private Action<GameShape> onShapeCreated;
 	private Action<GameSpawner[]> onSpawnersUpdated;
 	private ArrayList gameShapes;
@@ -20,9 +20,13 @@ public class GameShapeSpawnerController : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		foreach(GameShape shape in gameShapes) {
-			shape.UpdatePosition(Time.deltaTime);
-		}
+		for (int i = gameShapes.Count-1; i >= 0; i --) {
+			GameShape shape = gameShapes[i] as GameShape;
+			float percent = shape.UpdatePosition(Time.deltaTime);
+			if(percent >= 1) {
+				gameShapes.RemoveAt(i);
+			}
+        }
 	}
 
 	void LoadLevelConfig() {
