@@ -66,7 +66,6 @@ public class GamePipeView : EventTrigger
     {
 		Vector3 position = Camera.main.ScreenToWorldPoint(eventData.position);
 		int id = eventData.pointerId;
-		Debug.Log(id);
 		GamePipeDragView dragView = gamePlumbingDragView.GetPipeDrag(id);
 		if(!dragView.gameObject.activeSelf) {
 			dragView.StartPipeDrag(updatedPipe);

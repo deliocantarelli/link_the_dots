@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +11,9 @@ public class LifeController : MonoBehaviour
 	private float currentTime;
 	private int currentLifes;
 	private int currentScore;
+
+	private static Action<int> OnScoreUpdated;
+	private static Action<int> OnLifeUpdated;
     // Use this for initialization
     void Start()
     {
@@ -20,6 +24,15 @@ public class LifeController : MonoBehaviour
 		}
 		Init();
     }
+	private void OnDestroy()
+	{
+		Reset();
+	}
+	public void Reset()
+	{
+		OnScoreUpdated = null;
+		OnLifeUpdated = null;
+	}
 
 	private void Init()
 	{
@@ -44,12 +57,32 @@ public class LifeController : MonoBehaviour
 	public int GetCurrentTime() {
 		return Mathf.CeilToInt(currentTime);
 	}
-
+	public static int RegisterOnScoreUpdated(Action<int> action) {
+		LifeController.OnScoreUpdated += action;
+        if (LifeController.Instance)
+        {
+			return LifeController.Instance.currentScore;
+        }
+        return 0;
+	}
+	public static int RegisterOnLifeUpdated(Action<int> action) {
+		LifeController.OnLifeUpdated += action;
+		if(LifeController.Instance) {
+			return LifeController.Instance.currentLifes;
+        }
+		return 0;
+	}
 	private void Award(GameShape shape) {
 		currentScore++;
+		if(OnScoreUpdated != null) {
+			OnScoreUpdated(currentScore);
+		}
 	}
 	private void Penality(GameShape shape) {
 		currentLifes--;
+		if(OnLifeUpdated != null) {
+			OnLifeUpdated(currentLifes);
+		}
 		CheckDefeatCondition();
 	}
 
@@ -59,7 +92,6 @@ public class LifeController : MonoBehaviour
 		}
 	}
 	private void CheckTimeOut() {
-		Debug.Log(GetCurrentTime());
 		if(currentTime <= 0) {
 			OnDefeat();
 		}

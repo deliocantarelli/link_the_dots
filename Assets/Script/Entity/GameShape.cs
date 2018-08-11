@@ -57,8 +57,6 @@ public class GameShape
 		LifeController.Instance.OnShapeFinished(this, IsCorrect());
 	}
 	private bool IsCorrect() {
-		Debug.Log("pipe: " + Pipe.CurrentEndType);
-		Debug.Log("shape: " + Type);
 		return Pipe.CurrentEndType == Type;
 	}
 }
