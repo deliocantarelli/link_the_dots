@@ -20,13 +20,11 @@ public class GameShapeSpawnerController : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		for (int i = gameShapes.Count-1; i >= 0; i --) {
-			GameShape shape = gameShapes[i] as GameShape;
-			float percent = shape.UpdatePosition(Time.deltaTime);
-			if(percent >= 1) {
-				gameShapes.RemoveAt(i);
-			}
-        }
+		
+	}
+
+	public ArrayList GetAllShapes() {
+		return gameShapes;
 	}
 
 	void LoadLevelConfig() {
@@ -47,7 +45,6 @@ public class GameShapeSpawnerController : MonoBehaviour
 				onShapeCreated(shape);
 			}
         }
-
     }
 
 

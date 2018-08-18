@@ -1,18 +1,38 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
+public class ShapeAnimationName
+{
+	private ShapeAnimationName(string value) { Value = value; }
+
+    public string Value { get; set; }
+
+	public static ShapeAnimationName SPAWINING_ANIMATION { get { return new ShapeAnimationName("SpawnAnimation"); } }
+	public static ShapeAnimationName SPAWN_DELAY { get { return new ShapeAnimationName("SpawnDelay"); } }
+}
+
 public class GameShapeView : MonoBehaviour
 {
+	GameShape shape;
+
+	Animator animator;
     // Use this for initialization
     void Start()
-    {
+	{
 
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if(shape.State == GameShapeState.SPAWNING) {
+			Debug.Log(!animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWINING_ANIMATION.Value) && !animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWN_DELAY.Value));
+			if(!animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWINING_ANIMATION.Value) && !animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWN_DELAY.Value)) {
+				shape.UpdateState(GameShapeState.MOVING);
+				Debug.Log("got inside");
+			}
+        }
     }
 
 	private void OnPositionUpdated(Vector3 newPosition) {
@@ -26,6 +46,8 @@ public class GameShapeView : MonoBehaviour
 	}
 
 	private void InitShapeView(GameShape gameShape) {
+		shape = gameShape;
+		animator = gameObject.GetComponent<Animator>();
 		gameShape.RegisterOnPositionUpdated(OnPositionUpdated);
 		gameShape.RegisterOnShapeFinished(OnGameShapeFinished);
 	}

@@ -7,8 +7,16 @@ public enum GameShapeType{
     CIRCLE = 2
 }
 
+public enum GameShapeState {
+	SPAWNING = 0,
+    MOVING = 1,
+    CORRECT = 2,
+    WRONG = 3
+}
+
 public class GameShape
 {
+	public GameShapeState State { get; private set; }
 	public float Speed { get; private set; }
 	public float PercentualTraveled { get; private set; }
 	public GameShapeType Type { get; private set; }
@@ -22,6 +30,7 @@ public class GameShape
 		this.Type = type;
 		this.Speed = speed;
 		this.Position = initialPosition;
+		State = GameShapeState.SPAWNING;
 		Pipe = attachedPipe;
 	}
 
@@ -58,5 +67,27 @@ public class GameShape
 	}
 	private bool IsCorrect() {
 		return Pipe.CurrentEndType == Type;
+	}
+
+
+	public void UpdateState(GameShapeState shapeState) {
+		switch (State) {
+			case GameShapeState.SPAWNING:
+				FromSpawning(shapeState);
+				break;
+			default:
+
+				break;
+		}
+	}
+
+	private void FromSpawning(GameShapeState shapeState) {
+		switch (shapeState) {
+			case GameShapeState.MOVING:
+				State = GameShapeState.MOVING;
+				break;
+			default:
+				break;
+		}
 	}
 }
