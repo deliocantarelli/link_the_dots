@@ -6,6 +6,7 @@ public class GamePipeEndGroupView : MonoBehaviour
 	public GameObject pipeEndParent;
 
 	public GamePipeEndController gameEndPipeController;
+	public GamePlumbingView gamePlumbingView;
     
     public GameObject bottomCircle;
     public GameObject bottomSquare;
@@ -32,7 +33,7 @@ public class GamePipeEndGroupView : MonoBehaviour
     
 	private void OnPipeEndAdded(GamePipeEnd pipeEnd) {
 		GameObject prefab = GetPipeEndPrefab(pipeEnd.Type);
-		GamePipeEndView.CreatePipeEnd(prefab, pipeEndParent, pipeEnd);
+		GamePipeEndView.CreatePipeEnd(prefab, pipeEndParent, pipeEnd, gamePlumbingView);
 	}
 
     private GameObject GetPipeEndPrefab(GameShapeType type)

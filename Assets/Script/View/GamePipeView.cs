@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
@@ -16,10 +16,14 @@ public class GamePipeView : EventTrigger
 	private Vector3 origin;
 	private Vector3 last;
 
+	public int LastTouchIndex { get; private set; }
+
+	private Action<GamePipeView> OnPipeViewUpdated;
+
     // Use this for initialization
     void Start()
     {
-
+		LastTouchIndex = 0;
     }
 
     // Update is called once per frame
@@ -27,24 +31,33 @@ public class GamePipeView : EventTrigger
     {
 
     }
-	public static void CreatePipe(GameObject pipePrefab, GamePipe pipeDef, GameObject parent, GamePlumbingController plumbingController, GamePlumbingDragView plumbingDragView) {
+	public static GamePipeView CreatePipe(GameObject pipePrefab, GamePipe pipeDef, GameObject parent, GamePlumbingController plumbingController, GamePlumbingDragView plumbingDragView) {
 		Vector3 position = pipeDef.StartPoint;
 		GameObject newPipeObject = Instantiate(pipePrefab, position, Quaternion.identity);
 		newPipeObject.transform.SetParent(parent.transform);
 		GamePipeView component = newPipeObject.AddComponent<GamePipeView>();
 		component.InitView(pipeDef, plumbingController, plumbingDragView);
+		return component;
 	}
 	private void InitView(GamePipe pipe, GamePlumbingController plumbingController, GamePlumbingDragView plumbingDragView) {
         pipe.RegisterOnPipeUpdated(OnPipeUpdated);
 		gamePlumbingDragView = plumbingDragView;
 		gamePlumbingController = plumbingController;
         OnPipeUpdated(pipe);
+	}
+    public void RegisterOnPipeViewUpdated(Action<GamePipeView> action)
+    {
+        OnPipeViewUpdated += action;
     }
     private void OnPipeUpdated(GamePipe pipe) {
         updatedPipe = pipe;
         origin = pipe.StartPoint;  //remember to take this off
         last = pipe.CurrentEnd;
 		UpdatePipe(origin, last);
+
+		if(OnPipeViewUpdated != null) {
+			OnPipeViewUpdated(this);
+		}
     }
 	private void UpdatePipeEnd(Vector3 position, GameShapeType newEndType) {
         UpdatePipe(origin, position);
@@ -61,9 +74,21 @@ public class GamePipeView : EventTrigger
 
 		rectTrans.SetPositionAndRotation(rectTrans.position, Quaternion.Euler(0,0,angleDeg + 90));
 	}
-    
+
+	public GameShapeType GetTypeAttached () {
+		return updatedPipe.CurrentEndType;
+	}
+
+	public override void OnBeginDrag(PointerEventData eventData)
+	{
+		base.OnBeginDrag(eventData);
+
+        LastTouchIndex = gamePlumbingController.GetCurrentTouchIndex();
+	}
+
 	public override void OnDrag (PointerEventData eventData)
     {
+		base.OnDrag(eventData);
 		Vector3 position = Camera.main.ScreenToWorldPoint(eventData.position);
 		int id = eventData.pointerId;
 		GamePipeDragView dragView = gamePlumbingDragView.GetPipeDrag(id);

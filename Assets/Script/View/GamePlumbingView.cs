@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class GamePlumbingView : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class GamePlumbingView : MonoBehaviour
 	public GamePlumbingDragView gamePlumbingDragView;
 
     public GameObject pipePrefab;
+	private ArrayList pipeViewList = new ArrayList();
+	private Action<GamePipeView> onPipeViewAdded;
+
     // Use this for initialization
     void Start()
     {
@@ -28,6 +32,41 @@ public class GamePlumbingView : MonoBehaviour
 
     void AddPipe(GamePipe pipe)
     {
-		GamePipeView.CreatePipe(pipePrefab, pipe, pipeParent, gamePlumbingController, gamePlumbingDragView);
+		GamePipeView pipeView = GamePipeView.CreatePipe(pipePrefab, pipe, pipeParent, gamePlumbingController, gamePlumbingDragView);
+		pipeViewList.Add(pipeView);
+
+		if(onPipeViewAdded != null) {
+			onPipeViewAdded(pipeView);
+		}
     }
+
+    public void RegisterOnPipeViewAdded(Action<GamePipeView> action)
+    {
+        onPipeViewAdded += action;
+    }
+
+    public void RegisterOnPipeViewUpdated(Action<GamePipeView> action)
+    {
+		foreach (GamePipeView pipe in pipeViewList)
+        {
+            pipe.RegisterOnPipeViewUpdated(action);
+		}
+        Action<GamePipeView> onAddAction = pipe =>
+        {
+			pipe.RegisterOnPipeViewUpdated(action);
+        };
+        RegisterOnPipeViewAdded(onAddAction);
+    }
+
+	public GamePipeView GetLastTouchedWithType(GameShapeType type) {
+		GamePipeView lastPipeView = null;
+		int highestIndex = -1;
+		foreach (GamePipeView pipeView in pipeViewList) {
+			if(pipeView.GetTypeAttached() == type && pipeView.LastTouchIndex > highestIndex) {
+				lastPipeView = pipeView;
+				highestIndex = pipeView.LastTouchIndex;
+			}
+		}
+		return lastPipeView;
+	}
 }

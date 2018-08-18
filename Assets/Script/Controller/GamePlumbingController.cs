@@ -7,7 +7,9 @@ public class GamePlumbingController : MonoBehaviour
 	public GamePipeEndController pipeEndController;
 	public GameShapeSpawnerController spawnerController;
     private ArrayList pipes;
-    private Action<GamePipe> onPipeAdded;
+	private Action<GamePipe> onPipeAdded;
+
+	private int currentTouchIndex = 0;
     // Use this for initialization
     void Start()
     {
@@ -51,4 +53,23 @@ public class GamePlumbingController : MonoBehaviour
 			return pipes;
         }
     }
+
+	public void RegisterOnPipeUpdated(Action<GamePipe> action) {
+		foreach(GamePipe pipe in pipes) {
+			pipe.RegisterOnPipeUpdated(action);
+		}
+		Action<GamePipe> onAddAction = pipe =>
+		{
+			pipe.RegisterOnPipeUpdated(action);
+		};
+		RegisterOnPipesAdded(onAddAction);
+	}
+
+	public void GetNumberOfPipes() {
+		
+	}
+
+	public int GetCurrentTouchIndex() {
+		return ++currentTouchIndex;
+	}
 }
