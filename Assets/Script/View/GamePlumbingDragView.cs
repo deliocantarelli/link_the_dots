@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class GamePlumbingDragView : MonoBehaviour
 {
@@ -23,7 +25,7 @@ public class GamePlumbingDragView : MonoBehaviour
 		}
 	}
 
-	public GamePipeDragView GetPipeDrag(int id)
+	private GamePipeDragView GetPipeDrag(int id)
 	{
 #if UNITY_STANDALONE || UNITY_EDITOR
 		if(id < 0 && id >= -3) {
@@ -35,4 +37,14 @@ public class GamePlumbingDragView : MonoBehaviour
         }
 		return null;
 	}
+	public void UpdatePipeDragView(PointerEventData eventData, Vector3 startPos) {
+        Vector3 position = Camera.main.ScreenToWorldPoint(eventData.position);
+        int id = eventData.pointerId;
+        GamePipeDragView dragView = GetPipeDrag(id);
+		dragView.UpdatePipeDrag(startPos, position);
+	}
+	public GamePipeEndView FinishPipeDrag(PointerEventData eventData) {
+        int id = eventData.pointerId;
+		return GetPipeDrag(id).FinishPipeDrag(eventData);
+    }
 }

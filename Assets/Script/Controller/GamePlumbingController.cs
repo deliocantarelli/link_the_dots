@@ -6,7 +6,7 @@ public class GamePlumbingController : MonoBehaviour
 {
 	public GamePipeEndController pipeEndController;
 	public GameShapeSpawnerController spawnerController;
-    private ArrayList pipes;
+	private ArrayList pipes = new ArrayList();
 	private Action<GamePipe> onPipeAdded;
 
 	private int currentTouchIndex = 0;
@@ -32,16 +32,17 @@ public class GamePlumbingController : MonoBehaviour
 	}
 
 	private GamePipe AddPipe(GameSpawner spawner, GamePipeEnd end) {
-		GamePipe newPipe = new GamePipe(spawner.SpawnPosition, end.Position, end.Type);
+		GamePipe newPipe = new GamePipe(spawner, end);
         pipes.Add(newPipe);
+		Debug.Log(newPipe);
 		if(onPipeAdded != null) {
 			onPipeAdded(newPipe);
         }
 		return newPipe;
 	}
 
-	public void UpdatePipeEnd(GamePipe pipe, Vector3 pipeEnd, GameShapeType newEndType) {
-		pipe.UpdateGamePipeEnd(pipeEnd, newEndType);
+	public void UpdatePipeEnd(GamePipe pipe, GamePipeEnd pipeEnd) {
+		pipe.UpdateGamePipeEnd(pipeEnd, pipeEnd.Type);
 	}
 
 	public ArrayList RegisterOnPipesAdded(Action<GamePipe> action)
@@ -55,11 +56,11 @@ public class GamePlumbingController : MonoBehaviour
     }
 
 	public void RegisterOnPipeUpdated(Action<GamePipe> action) {
-		foreach(GamePipe pipe in pipes) {
-			pipe.RegisterOnPipeUpdated(action);
-		}
-		Action<GamePipe> onAddAction = pipe =>
-		{
+        foreach(GamePipe pipe in pipes) {
+            pipe.RegisterOnPipeUpdated(action);
+        }
+        Action<GamePipe> onAddAction = pipe =>
+        {
 			pipe.RegisterOnPipeUpdated(action);
 		};
 		RegisterOnPipesAdded(onAddAction);
@@ -71,5 +72,8 @@ public class GamePlumbingController : MonoBehaviour
 
 	public int GetCurrentTouchIndex() {
 		return ++currentTouchIndex;
+	}
+	public void SetPipeFromSpawner(GameSpawner spawner, GamePipeEnd pipeEnd) {
+
 	}
 }

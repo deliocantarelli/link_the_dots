@@ -1,45 +1,47 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
-public class GameShapeSpawnerView : MonoBehaviour
+public class GameShapeSpawnerView : EventTrigger
 {
-	private GameObject[] spawnerObjects;
+	public GameSpawner Spawner { get; private set; }
+	public GamePlumbingDragView gamePlumbingDragView;
+	public GamePlumbingController gamePlumbingController;
 
-	public GameShapeSpawnerController spawnerController;
-
-	public GameObject spawnersParent;
-    public GameObject spawnerPrefab;
-    // Use this for initialization
-    void Start()
-    {
-		GameSpawner[] gameShapeSpawners = spawnerController.RegisterOnSpawnersUpdated(OnSpawnersUpdated);
-		if(gameShapeSpawners != null) {
-			OnSpawnersUpdated(gameShapeSpawners);
-		}
+	public static GameShapeSpawnerView CreateSpawnerView(GameObject spawnerPrefab, GameSpawner spawner, GameObject parent, GamePlumbingDragView gamePlumbingDragView, GamePlumbingController gamePlumbingController)
+	{
+        GameObject spawnerObj = Instantiate(spawnerPrefab, spawner.SpawnPosition, Quaternion.identity);
+		spawnerObj.transform.parent = parent.transform;
+		GameShapeSpawnerView component = spawnerObj.AddComponent<GameShapeSpawnerView>();
+		component.InitSpawner(gamePlumbingDragView, gamePlumbingController, spawner);
+		return component;
     }
+	private void InitSpawner(GamePlumbingDragView plumbingDragView, GamePlumbingController plumbingController, GameSpawner spawner) {
+		gamePlumbingDragView = plumbingDragView;
+		gamePlumbingController = plumbingController;
+		Spawner = spawner;
+	}
 
-    // Update is called once per frame
-    void Update()
+    //public override void OnBeginDrag(PointerEventData eventData)
+    //{
+    //    base.OnBeginDrag(eventData);
+
+    //    LastTouchIndex = gamePlumbingController.GetCurrentTouchIndex();
+    //}
+
+    public override void OnDrag(PointerEventData eventData)
     {
-
+		Debug.Log("draging");
+        base.OnDrag(eventData);
+		gamePlumbingDragView.UpdatePipeDragView(eventData, Spawner.SpawnPosition);
     }
-
-	void OnSpawnersUpdated(GameSpawner[] spawners) {
-		if(spawnerObjects != null) {
-			foreach (GameObject spawner in spawnerObjects) {
-				Destroy(spawner);
-			}
+    
+    public override void OnEndDrag(PointerEventData eventData)
+    {
+        GamePipeEndView endView = gamePlumbingDragView.FinishPipeDrag(eventData);
+		if(endView != null) {
+			gamePlumbingController.SetPipeFromSpawner(Spawner, endView.PipeEnd);
         }
-		spawnerObjects = new GameObject[spawners.Length];
-		for (int i = 0; i < spawners.Length; i ++) {
-			GameSpawner spawn = spawners[i];
-			spawnerObjects[i] = CreateSpawnerObject(spawn);
-		}
-	}
 
-	GameObject CreateSpawnerObject(GameSpawner spawner) {
-		GameObject spawnerObj = Instantiate(spawnerPrefab, spawner.SpawnPosition, Quaternion.identity);
-		spawnerObj.transform.parent = spawnersParent.transform;
-		return spawnerObj;
-	}
+    }
 }

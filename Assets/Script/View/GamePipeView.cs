@@ -59,9 +59,9 @@ public class GamePipeView : EventTrigger
 			OnPipeViewUpdated(this);
 		}
     }
-	private void UpdatePipeEnd(Vector3 position, GameShapeType newEndType) {
-        UpdatePipe(origin, position);
-		gamePlumbingController.UpdatePipeEnd(updatedPipe, position, newEndType);
+	private void UpdatePipeEnd(GamePipeEnd pipeEnd) {
+		UpdatePipe(origin, pipeEnd.Position);
+		gamePlumbingController.UpdatePipeEnd(updatedPipe, pipeEnd);
     }
 
 	private void UpdatePipe(Vector3 start, Vector3 position) {
@@ -89,31 +89,14 @@ public class GamePipeView : EventTrigger
 	public override void OnDrag (PointerEventData eventData)
     {
 		base.OnDrag(eventData);
-		Vector3 position = Camera.main.ScreenToWorldPoint(eventData.position);
-		int id = eventData.pointerId;
-		GamePipeDragView dragView = gamePlumbingDragView.GetPipeDrag(id);
-		if(!dragView.gameObject.activeSelf) {
-			dragView.StartPipeDrag(updatedPipe);
-		}
-		dragView.UpdatePipeDrag(position);
+		gamePlumbingDragView.UpdatePipeDragView(eventData, updatedPipe.StartPoint);
     }
 
     public override void OnEndDrag (PointerEventData eventData) {
-        List<RaycastResult> results = new List<RaycastResult>();
-		EventSystem.current.RaycastAll(eventData, results);
-		foreach(RaycastResult result in results) {
-			GamePipeEndView pipeEnd = result.gameObject.GetComponent<GamePipeEndView>();
-			if (pipeEnd != null){
-				Vector3 newPosition = pipeEnd.gameObject.transform.position;
-				UpdatePipeEnd(newPosition, pipeEnd.EndType);
-				break;
-			}
-		}
-        int id = eventData.pointerId;
-        GamePipeDragView dragView = gamePlumbingDragView.GetPipeDrag(id);
-		if(dragView.gameObject.activeSelf) {
-			dragView.StopPipeDrag();
-		}
+		GamePipeEndView endView = gamePlumbingDragView.FinishPipeDrag(eventData);
+        if(endView != null) {
+			UpdatePipeEnd(endView.PipeEnd);
+        }
+
 	}
-    
 }

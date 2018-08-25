@@ -11,7 +11,8 @@ public enum GameShapeState {
 	SPAWNING = 0,
     MOVING = 1,
     CORRECT = 2,
-    WRONG = 3
+    WRONG = 3,
+    EXPLODING = 4
 }
 
 public class GameShape
@@ -25,13 +26,21 @@ public class GameShape
 
 	private Action<Vector3> onGameShapePositionUpdated;
 	private Action<GameShape, Vector3, bool> onGameShapeFinished;
+	private Action<GameShape> onStateChanged;
 
-	public GameShape(GameShapeType type, Vector3 initialPosition, float speed, GamePipe attachedPipe) {
+	public GameShape(GameShapeType type, Vector3 initialPosition, float speed) {
 		this.Type = type;
 		this.Speed = speed;
 		this.Position = initialPosition;
 		State = GameShapeState.SPAWNING;
-		Pipe = attachedPipe;
+	}
+
+	public void UpdateAttachedPipe(GamePipe pipe) {
+		if(Pipe != null) {
+			Pipe.RemoveShape(this);
+        }
+		Pipe = pipe;
+		Pipe.AttachShape(this);
 	}
 
 	public float UpdatePosition(float dt) {
@@ -46,12 +55,22 @@ public class GameShape
 		}
 		return PercentualTraveled;
 	}
-	public void RegisterOnPositionUpdated(Action<Vector3> action) {
-		onGameShapePositionUpdated += action;
-	}
-	public void RegisterOnShapeFinished(Action<GameShape, Vector3, bool> action) {
-		onGameShapeFinished += action;
-	}
+    public void RegisterOnStateChanged(Action<GameShape> action)
+    {
+		onStateChanged += action;
+    }
+	public void RemoveOnStateChanged(Action<GameShape> action)
+    {
+		onStateChanged -= action;
+    }
+    public void RegisterOnPositionUpdated(Action<Vector3> action)
+    {
+        onGameShapePositionUpdated += action;
+    }
+    public void RegisterOnShapeFinished(Action<GameShape, Vector3, bool> action)
+    {
+        onGameShapeFinished += action;
+    }
 	public void RemoveOnShapeFinished(Action<GameShape, Vector3, bool> action) {
 		onGameShapeFinished -= action;
 	}
@@ -62,7 +81,8 @@ public class GameShape
         if (onGameShapeFinished != null)
         {
             onGameShapeFinished(this, newPosition, IsCorrect());
-        }
+		}
+        Pipe.RemoveShape(this);
 		LifeController.Instance.OnShapeFinished(this, IsCorrect());
 	}
 	private bool IsCorrect() {
@@ -84,10 +104,22 @@ public class GameShape
 	private void FromSpawning(GameShapeState shapeState) {
 		switch (shapeState) {
 			case GameShapeState.MOVING:
-				State = GameShapeState.MOVING;
+				if(this.Pipe == null) {
+					SetState(GameShapeState.EXPLODING);
+				} else {
+					SetState(GameShapeState.MOVING);
+                }
 				break;
 			default:
 				break;
+		}
+	}
+	private void SetState(GameShapeState newState) {
+		if(newState != State) {
+			State = newState;
+			if(onStateChanged != null) {
+				onStateChanged(this);
+			}
 		}
 	}
 }

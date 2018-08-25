@@ -38,7 +38,7 @@ public class GameShapeSpawnerController : MonoBehaviour
         {
 			GameShapeType newShapeType = spawner.GetRandomShapeType();
 			Vector3 position = spawner.SpawnPosition;
-			GameShape shape = new GameShape(newShapeType, position, speed, spawner.AttachedPipe);
+			GameShape shape = new GameShape(newShapeType, position, speed);
 			gameShapes.Add(shape);
 			
 			if(onShapeCreated != null) {

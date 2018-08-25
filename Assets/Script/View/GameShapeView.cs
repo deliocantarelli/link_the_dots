@@ -27,14 +27,16 @@ public class GameShapeView : MonoBehaviour
     void Update()
     {
         if(shape.State == GameShapeState.SPAWNING) {
-			Debug.Log(!animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWINING_ANIMATION.Value) && !animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWN_DELAY.Value));
 			if(!animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWINING_ANIMATION.Value) && !animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWN_DELAY.Value)) {
 				shape.UpdateState(GameShapeState.MOVING);
-				Debug.Log("got inside");
 			}
         }
     }
-
+	private void OnStateChanged(GameShape gameShape) {
+		if(gameShape.State == GameShapeState.EXPLODING) {
+			Debug.Log("exploded...");
+		}
+	}
 	private void OnPositionUpdated(Vector3 newPosition) {
 		gameObject.transform.position = newPosition;
 	}
@@ -42,16 +44,17 @@ public class GameShapeView : MonoBehaviour
 		gameObject.transform.position = newPosition;
         shape.RemoveOnShapeFinished(OnGameShapeFinished);
         shape.RemoveOnPositionUpdated(OnPositionUpdated);
-		//Destroy(gameObject);
+		Destroy(gameObject);
 	}
 
-	private void InitShapeView(GameShape gameShape) {
+	private void InitShapeView(GameShape gameShape)
+	{
 		shape = gameShape;
 		animator = gameObject.GetComponent<Animator>();
 		gameShape.RegisterOnPositionUpdated(OnPositionUpdated);
 		gameShape.RegisterOnShapeFinished(OnGameShapeFinished);
+		gameShape.RegisterOnStateChanged(OnStateChanged);
 	}
-    
 	public static void CreateShape(GameObject shapePrefab, GameShape shape, GameObject parent) {
 		GameObject shapeObj = Instantiate(shapePrefab, shape.Position, Quaternion.identity);
 		shapeObj.transform.SetParent(parent.transform);

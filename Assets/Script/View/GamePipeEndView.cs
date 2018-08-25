@@ -4,8 +4,9 @@ using UnityEngine.EventSystems;
 
 public class GamePipeEndView : EventTrigger
 {
+	public GamePipeEnd PipeEnd { get; private set; }
 	GamePipeView pipeView = null;
-	public GameShapeType EndType { get; private set; }
+	public GameShapeType EndType { get { return PipeEnd.Type; } }
 
 	private GamePlumbingView gamePlumbingView;
 	private bool dragEnabled = false;
@@ -28,7 +29,7 @@ public class GamePipeEndView : EventTrigger
         pipeEndObj.transform.SetParent(parent.transform);
         GamePipeEndView component = pipeEndObj.AddComponent<GamePipeEndView>();
 		component.gamePlumbingView = gamePlumbingView;
-		component.EndType = pipeDef.Type;
+		component.PipeEnd = pipeDef;
 		component.InitPipeEnd();
     }
 	public override void OnBeginDrag(PointerEventData eventData)

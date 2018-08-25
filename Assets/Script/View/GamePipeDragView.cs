@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GamePipeDragView : MonoBehaviour
 {
@@ -17,8 +19,7 @@ public class GamePipeDragView : MonoBehaviour
 		return component;
     }
 
-    public void StartPipeDrag(GamePipe pipe) {
-		startPos = pipe.StartPoint;
+	public void StartPipeDrag(Vector3 startPos) {
 		gameObject.transform.position = startPos;
 		gameObject.SetActive(true);
 	}
@@ -26,8 +27,13 @@ public class GamePipeDragView : MonoBehaviour
 		gameObject.SetActive(false);
 	}
 
-    public void UpdatePipeDrag(Vector3 position)
+	public void UpdatePipeDrag(Vector3 startPos, Vector3 position)
     {
+        if (!gameObject.activeSelf)
+        {
+			StartPipeDrag(startPos);
+        }
+
         Vector3 endPos = new Vector3(position.x, position.y);
         float size = Vector3.Distance(startPos, endPos);
         var angleDeg = Mathf.Atan2(endPos.y - startPos.y, endPos.x - startPos.x) * Mathf.Rad2Deg;
@@ -35,5 +41,24 @@ public class GamePipeDragView : MonoBehaviour
         rectTrans.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size);
 
         rectTrans.SetPositionAndRotation(rectTrans.position, Quaternion.Euler(0, 0, angleDeg + 90));
-    }
+	}
+	public GamePipeEndView FinishPipeDrag(PointerEventData eventData) {
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+		GamePipeEndView pipeEndResult = null;
+        foreach (RaycastResult result in results)
+        {
+            GamePipeEndView pipeEnd = result.gameObject.GetComponent<GamePipeEndView>();
+            if (pipeEnd != null)
+            {
+				pipeEndResult = pipeEnd;
+                break;
+            }
+        }
+        if (gameObject.activeSelf)
+        {
+            StopPipeDrag();
+        }
+		return pipeEndResult;
+	}
 }
