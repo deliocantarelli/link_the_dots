@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 
 public class LifeController : MonoBehaviour
-{
+{   
 	public static LifeController Instance { get; private set; }
 	public int startLifes = 3;
 	public int maximumTime = 20;
@@ -39,21 +39,12 @@ public class LifeController : MonoBehaviour
 		currentLifes = startLifes;
 		currentTime = maximumTime;
 	}
-
 	// Update is called once per frame
 	void Update()
     {
 		currentTime -= Time.deltaTime;
 		CheckTimeOut();
     }
-
-	public void OnShapeFinished(GameShape shape, bool isCorrect) {
-		if(!isCorrect) {
-			Penality(shape);
-		} else {
-			Award(shape);
-		}
-	}
 	public int GetCurrentTime() {
 		return Mathf.CeilToInt(currentTime);
 	}
@@ -72,13 +63,13 @@ public class LifeController : MonoBehaviour
         }
 		return 0;
 	}
-	private void Award(GameShape shape) {
+	public void Award() {
 		currentScore++;
 		if(OnScoreUpdated != null) {
 			OnScoreUpdated(currentScore);
 		}
 	}
-	private void Penality(GameShape shape) {
+	public void Penality() {
 		currentLifes--;
 		if(OnLifeUpdated != null) {
 			OnLifeUpdated(currentLifes);

@@ -31,7 +31,6 @@ public class GameShapeSpawnerView : EventTrigger
 
     public override void OnDrag(PointerEventData eventData)
     {
-		Debug.Log("draging");
         base.OnDrag(eventData);
 		gamePlumbingDragView.UpdatePipeDragView(eventData, Spawner.SpawnPosition);
     }

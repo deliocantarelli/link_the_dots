@@ -4,27 +4,18 @@ using System;
 
 public class GameShapeSpawnerController : MonoBehaviour
 {
+	public GameShapeController shapeController;
 	public float startDelay;
 	public float delay;
 	private GameSpawner[] spawners;
 	private float speed = 1;
 	private Action<GameShape> onShapeCreated;
 	private Action<GameSpawner[]> onSpawnersUpdated;
-	private ArrayList gameShapes;
-	// Use this for initialization
-	void Start()
-	{
-		gameShapes = new ArrayList();
-	}
 
 	// Update is called once per frame
 	void Update()
 	{
 		
-	}
-
-	public ArrayList GetAllShapes() {
-		return gameShapes;
 	}
 
 	void LoadLevelConfig() {
@@ -34,17 +25,14 @@ public class GameShapeSpawnerController : MonoBehaviour
     void SpawnShape() {
         int spawnerIndex = UnityEngine.Random.Range(0, spawners.Length);
 		GameSpawner spawner = spawners[spawnerIndex];
-		if (spawners[spawnerIndex].AttachedPipe != null)
-        {
-			GameShapeType newShapeType = spawner.GetRandomShapeType();
-			Vector3 position = spawner.SpawnPosition;
-			GameShape shape = new GameShape(newShapeType, position, speed);
-			gameShapes.Add(shape);
-			
-			if(onShapeCreated != null) {
-				onShapeCreated(shape);
-			}
-        }
+
+		GameShapeType newShapeType = spawner.GetRandomShapeType();
+
+		GameShape shape = shapeController.CreateShape(newShapeType, spawner, speed);
+		
+		if(onShapeCreated != null) {
+			onShapeCreated(shape);
+		}
     }
 
 

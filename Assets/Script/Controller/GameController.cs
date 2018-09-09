@@ -7,12 +7,13 @@ public class GameController : MonoBehaviour
 	public GamePipeEndController endPipeController;
 	public GameShapeSpawnerController spawnerController;
 	public GamePlumbingController plumbingController;
+	public GameShapeController shapeController;
 
 	private void Start()
 	{
 		spawnerController.SetSpawnersConfig();
 		endPipeController.SetEndPipeConfig();
-		plumbingController.StartPipes(spawnerController.GetSpawners(), endPipeController.GetPipeEnds());
+		//plumbingController.StartPipes(spawnerController.GetSpawners(), endPipeController.GetPipeEnds());
 		spawnerController.RegisterOnShapeCretedCB(OnGameShapeCreated);
 	}
 
@@ -26,18 +27,6 @@ public class GameController : MonoBehaviour
 
 	private void Update()
 	{
-		ArrayList gameShapes = spawnerController.GetAllShapes();
-        for (int i = gameShapes.Count - 1; i >= 0; i--)
-        {
-            GameShape shape = gameShapes[i] as GameShape;
-
-			if(shape.State == GameShapeState.MOVING) {
-				float percent = shape.UpdatePosition(Time.deltaTime);
-				if (percent >= 1)
-				{
-					gameShapes.RemoveAt(i);
-				}
-            }
-        }
+		shapeController.MoveAllShapes(Time.deltaTime);
 	}
 }

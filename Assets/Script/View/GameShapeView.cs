@@ -15,6 +15,7 @@ public class ShapeAnimationName
 public class GameShapeView : MonoBehaviour
 {
 	GameShape shape;
+	GameShapeController shapeController;
 
 	Animator animator;
     // Use this for initialization
@@ -28,23 +29,27 @@ public class GameShapeView : MonoBehaviour
     {
         if(shape.State == GameShapeState.SPAWNING) {
 			if(!animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWINING_ANIMATION.Value) && !animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWN_DELAY.Value)) {
-				shape.UpdateState(GameShapeState.MOVING);
+				shapeController.OnShapeFinishedSpawning(shape);
 			}
         }
     }
 	private void OnStateChanged(GameShape gameShape) {
 		if(gameShape.State == GameShapeState.EXPLODING) {
 			Debug.Log("exploded...");
-		}
+		} else if (gameShape.State == GameShapeState.FINISHED)
+        {
+			gameObject.transform.position = gameShape.Position;
+            DestroySelf();
+        }
 	}
 	private void OnPositionUpdated(Vector3 newPosition) {
 		gameObject.transform.position = newPosition;
 	}
-	private void OnGameShapeFinished(GameShape shape, Vector3 newPosition, bool isCorrect) {
-		gameObject.transform.position = newPosition;
-        shape.RemoveOnShapeFinished(OnGameShapeFinished);
-        shape.RemoveOnPositionUpdated(OnPositionUpdated);
-		Destroy(gameObject);
+	private void DestroySelf() {
+
+		shape.RemoveOnStateChanged(OnStateChanged);
+		shape.RemoveOnPositionUpdated(OnPositionUpdated);
+        Destroy(gameObject);
 	}
 
 	private void InitShapeView(GameShape gameShape)
@@ -52,7 +57,6 @@ public class GameShapeView : MonoBehaviour
 		shape = gameShape;
 		animator = gameObject.GetComponent<Animator>();
 		gameShape.RegisterOnPositionUpdated(OnPositionUpdated);
-		gameShape.RegisterOnShapeFinished(OnGameShapeFinished);
 		gameShape.RegisterOnStateChanged(OnStateChanged);
 	}
 	public static void CreateShape(GameObject shapePrefab, GameShape shape, GameObject parent) {

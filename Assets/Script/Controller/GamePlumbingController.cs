@@ -34,7 +34,7 @@ public class GamePlumbingController : MonoBehaviour
 	private GamePipe AddPipe(GameSpawner spawner, GamePipeEnd end) {
 		GamePipe newPipe = new GamePipe(spawner, end);
         pipes.Add(newPipe);
-		Debug.Log(newPipe);
+		spawner.AttachPipe(newPipe);
 		if(onPipeAdded != null) {
 			onPipeAdded(newPipe);
         }
@@ -74,6 +74,10 @@ public class GamePlumbingController : MonoBehaviour
 		return ++currentTouchIndex;
 	}
 	public void SetPipeFromSpawner(GameSpawner spawner, GamePipeEnd pipeEnd) {
-
+		if(spawner.AttachedPipe == null) {
+			AddPipe(spawner, pipeEnd);
+		} else {
+			UpdatePipeEnd(spawner.AttachedPipe, pipeEnd);
+		}
 	}
 }

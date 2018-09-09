@@ -12,7 +12,9 @@ public enum GameShapeState {
     MOVING = 1,
     CORRECT = 2,
     WRONG = 3,
-    EXPLODING = 4
+    EXPLODING = 4,
+    CORRECT_MOVING = 5,
+    FINISHED = 6
 }
 
 public class GameShape
@@ -21,40 +23,31 @@ public class GameShape
 	public float Speed { get; private set; }
 	public float PercentualTraveled { get; private set; }
 	public GameShapeType Type { get; private set; }
+	public GameShapeType CurrentEndType { get; private set; }
 	public Vector3 Position { get; private set; }
-	public GamePipe Pipe { get; private set; }
+	public GameSpawner Spawner { get; private set; }
+	public bool CanMove { get { return State == GameShapeState.MOVING || State == GameShapeState.CORRECT_MOVING; }}
 
 	private Action<Vector3> onGameShapePositionUpdated;
-	private Action<GameShape, Vector3, bool> onGameShapeFinished;
 	private Action<GameShape> onStateChanged;
 
-	public GameShape(GameShapeType type, Vector3 initialPosition, float speed) {
+	public GameShape(GameShapeType type, GameSpawner spawner, float speed) {
+		PercentualTraveled = 0;
+		Spawner = spawner;
 		this.Type = type;
 		this.Speed = speed;
-		this.Position = initialPosition;
+		this.Position = spawner.SpawnPosition;
 		State = GameShapeState.SPAWNING;
 	}
 
-	public void UpdateAttachedPipe(GamePipe pipe) {
-		if(Pipe != null) {
-			Pipe.RemoveShape(this);
-        }
-		Pipe = pipe;
-		Pipe.AttachShape(this);
-	}
+	public void UpdatePosition(float newPercentual, Vector3 newPosition) {
+		PercentualTraveled = newPercentual;
+		Position = newPosition;
 
-	public float UpdatePosition(float dt) {
-		float distanceTraveled = dt * Speed;
-		PercentualTraveled += distanceTraveled;
-		Vector3 newPosition = Pipe.GetPercentualPosition(PercentualTraveled);
-		if(PercentualTraveled >= 1) {
-			OnShapeFinished(newPosition);
-		}
-		else if(onGameShapePositionUpdated != null) {
+		if(onGameShapePositionUpdated != null) {
 			onGameShapePositionUpdated(newPosition);
 		}
-		return PercentualTraveled;
-	}
+	}   
     public void RegisterOnStateChanged(Action<GameShape> action)
     {
 		onStateChanged += action;
@@ -67,59 +60,26 @@ public class GameShape
     {
         onGameShapePositionUpdated += action;
     }
-    public void RegisterOnShapeFinished(Action<GameShape, Vector3, bool> action)
-    {
-        onGameShapeFinished += action;
-    }
-	public void RemoveOnShapeFinished(Action<GameShape, Vector3, bool> action) {
-		onGameShapeFinished -= action;
-	}
 	public void RemoveOnPositionUpdated(Action<Vector3> action) {
 		onGameShapePositionUpdated -= action;
 	}
-	private void OnShapeFinished(Vector3 newPosition) {
-        if (onGameShapeFinished != null)
-        {
-            onGameShapeFinished(this, newPosition, IsCorrect());
-		}
-        Pipe.RemoveShape(this);
-		LifeController.Instance.OnShapeFinished(this, IsCorrect());
-	}
-	private bool IsCorrect() {
-		return Pipe.CurrentEndType == Type;
-	}
-
-
-	public void UpdateState(GameShapeState shapeState) {
-		switch (State) {
-			case GameShapeState.SPAWNING:
-				FromSpawning(shapeState);
-				break;
-			default:
-
-				break;
-		}
-	}
-
-	private void FromSpawning(GameShapeState shapeState) {
-		switch (shapeState) {
-			case GameShapeState.MOVING:
-				if(this.Pipe == null) {
-					SetState(GameShapeState.EXPLODING);
-				} else {
-					SetState(GameShapeState.MOVING);
-                }
-				break;
-			default:
-				break;
-		}
-	}
-	private void SetState(GameShapeState newState) {
+   
+	public void SetState(GameShapeState newState) {
 		if(newState != State) {
 			State = newState;
 			if(onStateChanged != null) {
 				onStateChanged(this);
 			}
+		}
+	}
+
+    //this function indicates what it will do when an instance of Shape is finished, in case of other types of shapes
+    //but the controller which has to call it
+	public void OnShapeFinished(bool correct) {
+		if(correct) {
+			LifeController.Instance.Award();
+		} else {
+			LifeController.Instance.Penality();
 		}
 	}
 }

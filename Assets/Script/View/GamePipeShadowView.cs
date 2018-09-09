@@ -6,7 +6,7 @@ public class GamePipeShadowView : MonoBehaviour
 {
 	public void InitView(GameShape shape, GamePipe pipe)
 	{
-		shape.RegisterOnShapeFinished(OnShapeFinished);
+		shape.RegisterOnStateChanged(OnShapeStateChanged);
 		UpdatePipe(pipe.StartPoint, pipe.CurrentEnd);
 	}
 	public static GamePipeShadowView CreateShadow(GameObject shadowPrefab, GamePipe pipeDef, GameShape shape, GameObject parent)
@@ -29,8 +29,10 @@ public class GamePipeShadowView : MonoBehaviour
 
         rectTrans.SetPositionAndRotation(rectTrans.position, Quaternion.Euler(0, 0, angleDeg + 90));
     }
-	private void OnShapeFinished(GameShape shape, Vector3 position, bool isCorrect) {
-		Destroy(gameObject);
+	private void OnShapeStateChanged(GameShape shape) {
+		if(shape.State == GameShapeState.FINISHED) {
+			Destroy(gameObject);
+		}
 	}
 
 }

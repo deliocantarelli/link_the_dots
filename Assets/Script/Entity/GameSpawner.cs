@@ -20,4 +20,8 @@ public class GameSpawner
 	public void AttachPipe(GamePipe pipe) {
 		AttachedPipe = pipe;
 	}
+	public void RemovePipe() {
+		AttachedPipe = null;
+	}
+    
 }

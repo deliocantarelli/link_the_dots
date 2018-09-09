@@ -19,8 +19,6 @@ public class GamePlumbingShadowView : MonoBehaviour
 
     }
 	void OnPipeUpdated(GamePipe pipe) {
-		Debug.Log(pipe);
-		Debug.Log(pipe.shapeList);
 		foreach(GameShape shape in pipe.shapeList) {
 			if(shape.Type == pipe.CurrentEndType) {
 				CreatePipeShadow(shape, pipe);
