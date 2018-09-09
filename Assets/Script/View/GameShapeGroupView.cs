@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GameShapeGroupView : MonoBehaviour
 {
+	public GameShapeController shapeController;
 	public GameObject shapeParent;
 
     public GameObject squarePrefab;
@@ -17,7 +18,7 @@ public class GameShapeGroupView : MonoBehaviour
     }
 
 	void OnShapeCreated(GameShape shape) {
-		GameShapeView.CreateShape(GetShapePrefab(shape.Type), shape, shapeParent);
+		GameShapeView.CreateShape(GetShapePrefab(shape.Type), shape, shapeParent, shapeController);
 	}
 
     private GameObject GetShapePrefab(GameShapeType type)

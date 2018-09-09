@@ -31,16 +31,21 @@ public class GameShapeView : MonoBehaviour
 			if(!animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWINING_ANIMATION.Value) && !animator.GetCurrentAnimatorStateInfo(0).IsName(ShapeAnimationName.SPAWN_DELAY.Value)) {
 				shapeController.OnShapeFinishedSpawning(shape);
 			}
-        }
+		}
     }
 	private void OnStateChanged(GameShape gameShape) {
 		if(gameShape.State == GameShapeState.EXPLODING) {
 			Debug.Log("exploded...");
+            Invoke("BeforeDestruction", 0);
 		} else if (gameShape.State == GameShapeState.FINISHED)
         {
 			gameObject.transform.position = gameShape.Position;
-            DestroySelf();
+			Invoke("BeforeDestruction", 0);
         }
+	}
+	private void BeforeDestruction() {
+		shapeController.CanRemoveShape(shape);
+		DestroySelf();
 	}
 	private void OnPositionUpdated(Vector3 newPosition) {
 		gameObject.transform.position = newPosition;
@@ -52,17 +57,18 @@ public class GameShapeView : MonoBehaviour
         Destroy(gameObject);
 	}
 
-	private void InitShapeView(GameShape gameShape)
+	private void InitShapeView(GameShape gameShape, GameShapeController gameShapeController)
 	{
+		shapeController = gameShapeController;
 		shape = gameShape;
 		animator = gameObject.GetComponent<Animator>();
 		gameShape.RegisterOnPositionUpdated(OnPositionUpdated);
 		gameShape.RegisterOnStateChanged(OnStateChanged);
 	}
-	public static void CreateShape(GameObject shapePrefab, GameShape shape, GameObject parent) {
+	public static void CreateShape(GameObject shapePrefab, GameShape shape, GameObject parent, GameShapeController shapeController) {
 		GameObject shapeObj = Instantiate(shapePrefab, shape.Position, Quaternion.identity);
 		shapeObj.transform.SetParent(parent.transform);
 		GameShapeView shapeView = shapeObj.AddComponent<GameShapeView>();
-		shapeView.InitShapeView(shape);
+		shapeView.InitShapeView(shape, shapeController);
 	}
 }

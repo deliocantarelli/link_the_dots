@@ -4,18 +4,21 @@ using UnityEngine.EventSystems;
 
 public class GamePipeShadowView : MonoBehaviour
 {
-	public void InitView(GameShape shape, GamePipe pipe)
+	private GamePipe _pipe;
+
+	public void InitView(GamePipe pipe)
 	{
-		shape.RegisterOnStateChanged(OnShapeStateChanged);
+		_pipe = pipe;
+		pipe.RegisterOnPipeUpdated(OnPipeStateChanged);
 		UpdatePipe(pipe.StartPoint, pipe.CurrentEnd);
 	}
-	public static GamePipeShadowView CreateShadow(GameObject shadowPrefab, GamePipe pipeDef, GameShape shape, GameObject parent)
+	public static GamePipeShadowView CreateShadow(GameObject shadowPrefab, GamePipe pipeDef, GameObject parent)
     {
         Vector3 position = pipeDef.StartPoint;
 		GameObject newPipeObject = Instantiate(shadowPrefab, position, Quaternion.identity);
         newPipeObject.transform.SetParent(parent.transform);
 		GamePipeShadowView component = newPipeObject.AddComponent<GamePipeShadowView>();
-		component.InitView(shape, pipeDef);
+		component.InitView(pipeDef);
         return component;
     }
 	private void UpdatePipe(Vector3 start, Vector3 position)
@@ -29,10 +32,13 @@ public class GamePipeShadowView : MonoBehaviour
 
         rectTrans.SetPositionAndRotation(rectTrans.position, Quaternion.Euler(0, 0, angleDeg + 90));
     }
-	private void OnShapeStateChanged(GameShape shape) {
-		if(shape.State == GameShapeState.FINISHED) {
+	private void OnPipeStateChanged(GamePipe pipe) {
+		if(pipe.State == GamePipeState.FINISHED || pipe.State == GamePipeState.WRONG) {
 			Destroy(gameObject);
 		}
 	}
-
+	private void OnDestroy()
+	{
+		_pipe.RemoveOnPipeUpdated(OnPipeStateChanged);
+	}
 }

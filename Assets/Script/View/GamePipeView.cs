@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 public class GamePipeView : EventTrigger
 {   
+	
 	public GamePlumbingController gamePlumbingController;
 	public GamePlumbingDragView gamePlumbingDragView;
     
@@ -51,9 +52,13 @@ public class GamePipeView : EventTrigger
     }
     private void OnPipeUpdated(GamePipe pipe) {
         updatedPipe = pipe;
-        origin = pipe.StartPoint;  //remember to take this off
+        origin = pipe.StartPoint;
         last = pipe.CurrentEnd;
 		UpdatePipe(origin, last);
+
+		if(pipe.State == GamePipeState.CORRECT) {
+			Destroy(gameObject);
+		}
 
 		if(OnPipeViewUpdated != null) {
 			OnPipeViewUpdated(this);
@@ -97,6 +102,9 @@ public class GamePipeView : EventTrigger
         if(endView != null) {
 			UpdatePipeEnd(endView.PipeEnd);
         }
-
+	}
+	private void OnDestroy()
+	{
+		updatedPipe.RemoveOnPipeUpdated(OnPipeUpdated);
 	}
 }

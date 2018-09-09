@@ -19,10 +19,8 @@ public class GamePlumbingShadowView : MonoBehaviour
 
     }
 	void OnPipeUpdated(GamePipe pipe) {
-		foreach(GameShape shape in pipe.shapeList) {
-			if(shape.Type == pipe.CurrentEndType) {
-				CreatePipeShadow(shape, pipe);
-			}
+		if(pipe.State == GamePipeState.CORRECT) {
+			CreatePipeShadow(pipe);
 		}
 	}
 
@@ -36,8 +34,8 @@ public class GamePlumbingShadowView : MonoBehaviour
         //}
 	}
     
-	void CreatePipeShadow(GameShape shape, GamePipe pipe) {
-		GamePipeShadowView.CreateShadow(pipeShadowPrefab, pipe, shape, pipeShadowParent);
+	void CreatePipeShadow(GamePipe pipe) {
+		GamePipeShadowView.CreateShadow(pipeShadowPrefab, pipe, pipeShadowParent);
         
 	}
 }

@@ -361,6 +361,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pipeEndController: {fileID: 2113832417}
   spawnerController: {fileID: 1569860902}
+  shapeController: {fileID: 1726470039}
 --- !u!1 &555162584
 GameObject:
   m_ObjectHideFlags: 0
@@ -787,6 +788,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 186c859cf00b1423791d2716fed8c730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shapeController: {fileID: 1726470039}
   shapeParent: {fileID: 772713943}
   squarePrefab: {fileID: 1537369806628542, guid: 968848805e33446c98c589a5d1367861,
     type: 2}

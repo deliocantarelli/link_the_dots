@@ -21,7 +21,10 @@ public class GameSpawner
 		AttachedPipe = pipe;
 	}
 	public void RemovePipe() {
-		AttachedPipe = null;
+		if(AttachedPipe != null) {
+			AttachedPipe.SetState(GamePipeState.FINISHED);
+			AttachedPipe = null;
+        }
 	}
     
 }

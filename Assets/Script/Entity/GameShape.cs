@@ -14,7 +14,8 @@ public enum GameShapeState {
     WRONG = 3,
     EXPLODING = 4,
     CORRECT_MOVING = 5,
-    FINISHED = 6
+    FINISHED = 6,
+    TO_DESTROY = 7
 }
 
 public class GameShape

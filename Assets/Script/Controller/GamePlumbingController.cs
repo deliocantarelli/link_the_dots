@@ -6,6 +6,7 @@ public class GamePlumbingController : MonoBehaviour
 {
 	public GamePipeEndController pipeEndController;
 	public GameShapeSpawnerController spawnerController;
+	public GameShapeController shapeController;
 	private ArrayList pipes = new ArrayList();
 	private Action<GamePipe> onPipeAdded;
 
@@ -13,6 +14,7 @@ public class GamePlumbingController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+		spawnerController.RegisterOnShapeCretedCB(OnShapeCreated);
     }
 
     // Update is called once per frame
@@ -20,14 +22,22 @@ public class GamePlumbingController : MonoBehaviour
     {
 
     }
-
-	public void StartPipes(GameSpawner[] spawners, GamePipeEnd[] ends) {
-        int length = spawners.Length;
-		pipes = new ArrayList(length);
-		for (int x = 0; x < length; x ++) {
-			GamePipe pipe = AddPipe(spawners[x], ends[x]);
-
-			spawnerController.AttachPipeToSpawner(pipe, spawners[x]);
+	private void OnShapeCreated(GameShape shape) {
+		shape.RegisterOnStateChanged(OnShapeStateChanged);
+		if(shape.Spawner.AttachedPipe != null) {
+			shape.Spawner.AttachedPipe.SetState(GamePipeState.WRONG);
+		}
+    }
+    private void OnShapeStateChanged(GameShape shape) {
+		if(shape.State == GameShapeState.CORRECT_MOVING) {
+			if (shapeController.GetNumberOfValidShapesOnPipe(shape) == 0) {
+				shapeController.GetPipeOfShape(shape).SetState(GamePipeState.CORRECT);
+			}
+		} else if(shape.State == GameShapeState.FINISHED || shape.State == GameShapeState.TO_DESTROY) {
+			if (shapeController.GetNumberOfShapesOnPipe(shape) == 1)
+			{
+				shape.Spawner.RemovePipe();
+			}
 		}
 	}
 
@@ -43,6 +53,7 @@ public class GamePlumbingController : MonoBehaviour
 
 	public void UpdatePipeEnd(GamePipe pipe, GamePipeEnd pipeEnd) {
 		pipe.UpdateGamePipeEnd(pipeEnd, pipeEnd.Type);
+		shapeController.OnPipeUpdated(pipe);
 	}
 
 	public ArrayList RegisterOnPipesAdded(Action<GamePipe> action)
