@@ -12,6 +12,8 @@ public class GamePipeView : EventTrigger
     public GameObject pipePrefab;
 	public GameObject pipeDragPrefab;
 
+	public bool destroyed { get; private set; }
+
 	//erase origin, correct updatePipe as it is just temporary
 	private GamePipe updatedPipe;
 	private Vector3 origin;
@@ -27,6 +29,7 @@ public class GamePipeView : EventTrigger
     // Use this for initialization
     void Start()
     {
+		destroyed = false;
 		LastTouchIndex = 0;
     }
 
@@ -63,6 +66,7 @@ public class GamePipeView : EventTrigger
 			if(isDragging) {
 				gamePlumbingDragView.CancelPipeDragView(lastDragId);
 			}
+			destroyed = true;
             Destroy(gameObject);
 		}
 

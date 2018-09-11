@@ -10,7 +10,6 @@ public class GamePipeEndView : EventTrigger
 
 	private GamePlumbingView gamePlumbingView;
 	private bool dragEnabled = false;
-	private bool attachedPipeIsUpdated = false;
     // Use this for initialization
     void Start()
     {

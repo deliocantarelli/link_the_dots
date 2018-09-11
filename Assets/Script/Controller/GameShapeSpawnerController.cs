@@ -6,12 +6,17 @@ public class GameShapeSpawnerController : MonoBehaviour
 {
 	public GameShapeController shapeController;
 	public float startDelay;
-	public float delay;
+	public bool spawnAfterFinish = true;
+	private float delay = 6f;
 	private GameSpawner[] spawners;
-	private float speed = 0.2f;
-	private float spawnSpeed = 0.3f;
+	private float speed = 0.6f;
+	private float spawnSpeed = 0.5f;
+	private float afterExplodeDelay = 0.5f;
+	private float afterFinishDelay = 0.5f;
 	private Action<GameShape> onShapeCreated;
 	private Action<GameSpawner[]> onSpawnersUpdated;
+
+	private String SpawnShapeFunction = "SpawnShape";
 
 	// Update is called once per frame
 	void Update()
@@ -30,11 +35,30 @@ public class GameShapeSpawnerController : MonoBehaviour
 		GameShapeType newShapeType = spawner.GetRandomShapeType();
 
 		GameShape shape = shapeController.CreateShape(newShapeType, spawner, speed, spawnSpeed);
+
+		shape.RegisterOnStateChanged(OnShapeStateChanged);
 		
 		if(onShapeCreated != null) {
 			onShapeCreated(shape);
 		}
     }
+
+	private void OnShapeStateChanged(GameShape shape) {
+		if(spawnAfterFinish){
+			if (shape.State == GameShapeState.EXPLODING)
+            {
+				Invoke(SpawnShapeFunction, afterExplodeDelay);
+			} else if(shape.State == GameShapeState.FINISHED) {
+				Invoke(SpawnShapeFunction, afterFinishDelay);
+			}
+		}else if (shape.State == GameShapeState.EXPLODING)
+        {
+			CancelInvoke(SpawnShapeFunction);
+
+            StartShapeSpawn(afterExplodeDelay);
+        }
+
+	}
 
 
     public void SetSpawnersConfig()
@@ -56,7 +80,11 @@ public class GameShapeSpawnerController : MonoBehaviour
 			onSpawnersUpdated(spawners);
         }
 
-		InvokeRepeating("SpawnShape", startDelay, delay);
+		if(spawnAfterFinish) {
+			Invoke(SpawnShapeFunction, startDelay);
+		} else {
+			StartShapeSpawn(startDelay);
+        }
     }
 	public GameSpawner[] GetSpawners() {
 		return spawners;
@@ -72,5 +100,9 @@ public class GameShapeSpawnerController : MonoBehaviour
 	}
 	public void AttachPipeToSpawner(GamePipe pipe, GameSpawner spawner) {
 		spawner.AttachPipe(pipe);
+	}
+
+	public void StartShapeSpawn(float toStartDelay) {
+		InvokeRepeating(SpawnShapeFunction, toStartDelay, delay);
 	}
 }

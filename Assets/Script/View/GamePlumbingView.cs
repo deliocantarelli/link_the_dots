@@ -34,11 +34,18 @@ public class GamePlumbingView : MonoBehaviour
     {
 		GamePipeView pipeView = GamePipeView.CreatePipe(pipePrefab, pipe, pipeParent, gamePlumbingController, gamePlumbingDragView);
 		pipeViewList.Add(pipeView);
+		pipeView.RegisterOnPipeViewUpdated(OnPipeViewUpdated);
 
 		if(onPipeViewAdded != null) {
 			onPipeViewAdded(pipeView);
 		}
     }
+
+	void OnPipeViewUpdated(GamePipeView pipeView) {
+		if(pipeView.destroyed) {
+			pipeViewList.Remove(pipeView);
+		}
+	}
 
     public void RegisterOnPipeViewAdded(Action<GamePipeView> action)
     {

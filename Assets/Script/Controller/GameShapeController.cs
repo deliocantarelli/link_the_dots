@@ -40,15 +40,13 @@ public class GameShapeController : MonoBehaviour
 		Vector3 newPosition = pipe.GetPositionFromPercentual(percentualTravelled);
 
 		shape.UpdatePosition(percentualTravelled, newPosition);
-		Debug.Log(percentualTravelled);
 		return percentualTravelled;
-
 	}
 
 	public GameShape CreateShape(GameShapeType newShapeType, GameSpawner spawner, float speed, float spawnSpeed)
 	{
 		GameShape shape = new GameShape(newShapeType, spawner, speed, spawnSpeed);
-
+        
 		ShapePipePair newPair = new ShapePipePair
 		{
 			Shape = shape
