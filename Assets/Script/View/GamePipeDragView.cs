@@ -61,4 +61,10 @@ public class GamePipeDragView : MonoBehaviour
         }
 		return pipeEndResult;
 	}
+	public void CancelPipeDrag() {
+        if (gameObject.activeSelf)
+        {
+            StopPipeDrag();
+        }
+	}
 }

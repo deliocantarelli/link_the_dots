@@ -8,6 +8,8 @@ public class GameShapeSpawnerView : EventTrigger
 	public GamePlumbingDragView gamePlumbingDragView;
 	public GamePlumbingController gamePlumbingController;
 
+	private bool isHolding = false;
+
 	public static GameShapeSpawnerView CreateSpawnerView(GameObject spawnerPrefab, GameSpawner spawner, GameObject parent, GamePlumbingDragView gamePlumbingDragView, GamePlumbingController gamePlumbingController)
 	{
         GameObject spawnerObj = Instantiate(spawnerPrefab, spawner.SpawnPosition, Quaternion.identity);
@@ -32,14 +34,19 @@ public class GameShapeSpawnerView : EventTrigger
     public override void OnDrag(PointerEventData eventData)
     {
         base.OnDrag(eventData);
-		gamePlumbingDragView.UpdatePipeDragView(eventData, Spawner.SpawnPosition);
+		isHolding = !(Spawner.AttachedPipe != null && Spawner.AttachedPipe.State == GamePipeState.CORRECT);
+		if(isHolding) {
+			gamePlumbingDragView.UpdatePipeDragView(eventData, Spawner.SpawnPosition);
+        }
     }
     
     public override void OnEndDrag(PointerEventData eventData)
     {
-        GamePipeEndView endView = gamePlumbingDragView.FinishPipeDrag(eventData);
-		if(endView != null) {
-			gamePlumbingController.SetPipeFromSpawner(Spawner, endView.PipeEnd);
+		if(isHolding) {
+			GamePipeEndView endView = gamePlumbingDragView.FinishPipeDrag(eventData);
+			if(endView != null) {
+				gamePlumbingController.SetPipeFromSpawner(Spawner, endView.PipeEnd);
+			}
         }
 
     }

@@ -22,6 +22,7 @@ public class GameShape
 {
 	public GameShapeState State { get; private set; }
 	public float Speed { get; private set; }
+	public float SpawnSpeed { get; private set; }
 	public float PercentualTraveled { get; private set; }
 	public GameShapeType Type { get; private set; }
 	public GameShapeType CurrentEndType { get; private set; }
@@ -32,11 +33,12 @@ public class GameShape
 	private Action<Vector3> onGameShapePositionUpdated;
 	private Action<GameShape> onStateChanged;
 
-	public GameShape(GameShapeType type, GameSpawner spawner, float speed) {
+	public GameShape(GameShapeType type, GameSpawner spawner, float speed, float spawnSpeed) {
 		PercentualTraveled = 0;
 		Spawner = spawner;
 		this.Type = type;
 		this.Speed = speed;
+		SpawnSpeed = spawnSpeed;
 		this.Position = spawner.SpawnPosition;
 		State = GameShapeState.SPAWNING;
 	}

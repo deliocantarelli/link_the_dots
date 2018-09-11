@@ -17,6 +17,9 @@ public class GamePipeView : EventTrigger
 	private Vector3 origin;
 	private Vector3 last;
 
+	private int lastDragId = -1;
+	private bool isDragging = false;
+
 	public int LastTouchIndex { get; private set; }
 
 	private Action<GamePipeView> OnPipeViewUpdated;
@@ -56,8 +59,11 @@ public class GamePipeView : EventTrigger
         last = pipe.CurrentEnd;
 		UpdatePipe(origin, last);
 
-		if(pipe.State == GamePipeState.CORRECT) {
-			Destroy(gameObject);
+		if(pipe.State == GamePipeState.FINISHED || pipe.State == GamePipeState.CORRECT) {
+			if(isDragging) {
+				gamePlumbingDragView.CancelPipeDragView(lastDragId);
+			}
+            Destroy(gameObject);
 		}
 
 		if(OnPipeViewUpdated != null) {
@@ -88,18 +94,24 @@ public class GamePipeView : EventTrigger
 	{
 		base.OnBeginDrag(eventData);
 
+		lastDragId = eventData.pointerId;
+		isDragging = true;
+
         LastTouchIndex = gamePlumbingController.GetCurrentTouchIndex();
 	}
 
 	public override void OnDrag (PointerEventData eventData)
     {
 		base.OnDrag(eventData);
+
 		gamePlumbingDragView.UpdatePipeDragView(eventData, updatedPipe.StartPoint);
     }
 
     public override void OnEndDrag (PointerEventData eventData) {
+		isDragging = false;
+        
 		GamePipeEndView endView = gamePlumbingDragView.FinishPipeDrag(eventData);
-        if(endView != null) {
+        if(endView != null && this != null) {
 			UpdatePipeEnd(endView.PipeEnd);
         }
 	}

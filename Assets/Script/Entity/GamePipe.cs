@@ -19,6 +19,7 @@ public class GamePipe
 	public Vector3 CurrentEnd { get { return pipeEnd.Position; } }
 	public GameShapeType CurrentEndType { get { return pipeEnd.Type; } }
 	public GamePipeState State { get; private set; }
+	private float pipeSize = 0;
 
 	public GamePipe(GameSpawner spawner, GamePipeEnd startEnd) {
 		this.spawner = spawner;
@@ -28,6 +29,7 @@ public class GamePipe
 
 	public void UpdateGamePipeEnd(GamePipeEnd newEnd, GameShapeType newEndType) {
 		pipeEnd = newEnd;
+		pipeSize = Vector3.Distance(StartPoint, CurrentEnd);
 		OnPipeUpdated(this);
 	}
 
@@ -41,8 +43,11 @@ public class GamePipe
 	public void RegisterOnPipeRemoved(Action<GamePipe> action) {
 		OnPipeRemoved += action;
 	}
-
-    public Vector3 GetPercentualPosition(float percentual)
+	public float GetPercentualPosition(Vector3 position) {
+		float posSize = Vector3.Distance(StartPoint, position);
+		return posSize / pipeSize;
+	}
+    public Vector3 GetPositionFromPercentual(float percentual)
     {
 		return Vector3.Lerp(StartPoint, CurrentEnd, percentual);
     }

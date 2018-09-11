@@ -43,6 +43,9 @@ public class GamePlumbingDragView : MonoBehaviour
         GamePipeDragView dragView = GetPipeDrag(id);
 		dragView.UpdatePipeDrag(startPos, position);
 	}
+	public void CancelPipeDragView(int dragId) {
+		GetPipeDrag(dragId).CancelPipeDrag();
+	}
 	public GamePipeEndView FinishPipeDrag(PointerEventData eventData) {
         int id = eventData.pointerId;
 		return GetPipeDrag(id).FinishPipeDrag(eventData);

@@ -62,6 +62,7 @@ public class GameShapeView : MonoBehaviour
 		shapeController = gameShapeController;
 		shape = gameShape;
 		animator = gameObject.GetComponent<Animator>();
+		animator.speed = gameShape.SpawnSpeed;
 		gameShape.RegisterOnPositionUpdated(OnPositionUpdated);
 		gameShape.RegisterOnStateChanged(OnStateChanged);
 	}

@@ -8,7 +8,8 @@ public class GameShapeSpawnerController : MonoBehaviour
 	public float startDelay;
 	public float delay;
 	private GameSpawner[] spawners;
-	private float speed = 1;
+	private float speed = 0.2f;
+	private float spawnSpeed = 0.3f;
 	private Action<GameShape> onShapeCreated;
 	private Action<GameSpawner[]> onSpawnersUpdated;
 
@@ -28,7 +29,7 @@ public class GameShapeSpawnerController : MonoBehaviour
 
 		GameShapeType newShapeType = spawner.GetRandomShapeType();
 
-		GameShape shape = shapeController.CreateShape(newShapeType, spawner, speed);
+		GameShape shape = shapeController.CreateShape(newShapeType, spawner, speed, spawnSpeed);
 		
 		if(onShapeCreated != null) {
 			onShapeCreated(shape);
