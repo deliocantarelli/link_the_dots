@@ -6,6 +6,7 @@ public class GameSpawner
 	public GameShapeType[] SpawnTypes { get; private set; }
 	public Vector3 SpawnPosition { get; private set; }
 	public GamePipe AttachedPipe { get; private set; }
+	public int CurrentShapes = 0;
 
 	public GameSpawner(GameShapeType[] spawnTypes, Vector3 spawnPosition)
     {
@@ -26,5 +27,4 @@ public class GameSpawner
 			AttachedPipe = null;
         }
 	}
-    
 }

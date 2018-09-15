@@ -2,22 +2,37 @@ using UnityEngine;
 using System.Collections;
 using System;
 
+public enum SpawnType {
+	TIME = 0,
+	FINISH,
+	TIME_NO_OVERLAP
+}
+
 public class GameShapeSpawnerController : MonoBehaviour
 {
 	public GameShapeController shapeController;
 	public float startDelay;
-	public bool spawnAfterFinish = true;
-	private float delay = 6f;
-	private GameSpawner[] spawners;
-	private float speed = 0.6f;
-	private float spawnSpeed = 0.5f;
-	private float afterExplodeDelay = 0.5f;
-	private float afterFinishDelay = 0.5f;
-	private Action<GameShape> onShapeCreated;
-	private Action<GameSpawner[]> onSpawnersUpdated;
+	public SpawnType spawnType;
+	protected float delay = 1f;
+	protected GameSpawner[] spawners;
+	protected float speed = 0.6f;
+	protected float spawnSpeed = 0.5f;
+	protected float afterExplodeDelay = 0.5f;
+	protected float afterFinishDelay = 0.5f;
+	protected Action<GameShape> onShapeCreated;
+	protected Action<GameSpawner[]> onSpawnersUpdated;
 
-	private String SpawnShapeFunction = "SpawnShape";
+	protected String SpawnShapeFunction = "SpawnShape";
 
+	protected delegate void OnShapeStateChanged(GameShape shape);
+	protected OnShapeStateChanged onShapeStateChanged;
+
+	private void Start()
+	{
+		if(spawnType == SpawnType.TIME_NO_OVERLAP) {
+			Debug.Log("this class is not supposed to use this type, please, change this component to TimeOrFinishSpawnController!");
+		}
+	}
 	// Update is called once per frame
 	void Update()
 	{
@@ -28,38 +43,57 @@ public class GameShapeSpawnerController : MonoBehaviour
 		
 	}
     
-    void SpawnShape() {
-        int spawnerIndex = UnityEngine.Random.Range(0, spawners.Length);
-		GameSpawner spawner = spawners[spawnerIndex];
+	protected GameSpawner GetRandomEmptySpawner() {
+		ArrayList empties = new ArrayList();
+		foreach(GameSpawner spawner in spawners) {
+			if(spawner.CurrentShapes == 0) {
+				empties.Add(spawner);
+			}
+		}
+		if(empties.Count > 0) {
+			int spawnerIndex = UnityEngine.Random.Range(0, empties.Count);
+			return empties[spawnerIndex] as GameSpawner;
+		}
+		return null;
+	}
+
+	protected void SpawnShape(GameSpawner spawner = null) {
+		if(spawner == null) {
+			int spawnerIndex = UnityEngine.Random.Range(0, spawners.Length);
+			spawner = spawners[spawnerIndex];
+        }
 
 		GameShapeType newShapeType = spawner.GetRandomShapeType();
 
 		GameShape shape = shapeController.CreateShape(newShapeType, spawner, speed, spawnSpeed);
 
-		shape.RegisterOnStateChanged(OnShapeStateChanged);
+		spawner.CurrentShapes++;
+
+		shape.RegisterOnStateChanged(CallShapeStateChanged);
 		
 		if(onShapeCreated != null) {
 			onShapeCreated(shape);
 		}
     }
-
-	private void OnShapeStateChanged(GameShape shape) {
-		if(spawnAfterFinish){
-			if (shape.State == GameShapeState.EXPLODING)
-            {
-				Invoke(SpawnShapeFunction, afterExplodeDelay);
-			} else if(shape.State == GameShapeState.FINISHED) {
-				Invoke(SpawnShapeFunction, afterFinishDelay);
-			}
-		}else if (shape.State == GameShapeState.EXPLODING)
+    
+	protected void CallShapeStateChanged(GameShape shape) {
+		if(shape.HasFinished) {
+			shape.Spawner.CurrentShapes--;
+		}
+		onShapeStateChanged(shape);
+	}
+    protected virtual void SetShapeStateChanged()
+    {
+		if (spawnType == SpawnType.FINISH)
         {
-			CancelInvoke(SpawnShapeFunction);
-
-            StartShapeSpawn(afterExplodeDelay);
+			onShapeStateChanged = FinishShapeStateChanged;
+        }
+		else if (spawnType == SpawnType.TIME)
+        {
+			onShapeStateChanged = TimeShapeStateChanged;
         }
 
-	}
-
+    }
 
     public void SetSpawnersConfig()
     {
@@ -80,12 +114,17 @@ public class GameShapeSpawnerController : MonoBehaviour
 			onSpawnersUpdated(spawners);
         }
 
-		if(spawnAfterFinish) {
-			Invoke(SpawnShapeFunction, startDelay);
-		} else {
-			StartShapeSpawn(startDelay);
-        }
+		StartSpawners();
     }
+	protected virtual void StartSpawners() {
+        if (spawnType == SpawnType.FINISH)
+        {
+            Invoke(SpawnShapeFunction, startDelay);
+        }
+		else if(spawnType == SpawnType.TIME) {
+            StartShapeSpawn(startDelay);
+        }
+	}
 	public GameSpawner[] GetSpawners() {
 		return spawners;
 	}
@@ -104,5 +143,29 @@ public class GameShapeSpawnerController : MonoBehaviour
 
 	public void StartShapeSpawn(float toStartDelay) {
 		InvokeRepeating(SpawnShapeFunction, toStartDelay, delay);
+	}
+
+
+
+    //strategy shape state changed, by spawn type
+    protected void TimeShapeStateChanged(GameShape shape)
+	{
+		if (shape.State == GameShapeState.EXPLODING)
+        {
+            CancelInvoke(SpawnShapeFunction);
+
+            StartShapeSpawn(afterExplodeDelay);
+        }
+
+	}
+	protected void FinishShapeStateChanged(GameShape shape) {
+        if (shape.State == GameShapeState.EXPLODING)
+        {
+            Invoke(SpawnShapeFunction, afterExplodeDelay);
+        }
+        else if (shape.State == GameShapeState.FINISHED)
+        {
+            Invoke(SpawnShapeFunction, afterFinishDelay);
+        }
 	}
 }

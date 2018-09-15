@@ -29,6 +29,7 @@ public class GameShape
 	public Vector3 Position { get; private set; }
 	public GameSpawner Spawner { get; private set; }
 	public bool CanMove { get { return State == GameShapeState.MOVING || State == GameShapeState.CORRECT_MOVING; }}
+	public bool HasFinished { get { return State == GameShapeState.TO_DESTROY; }}
 
 	private Action<Vector3> onGameShapePositionUpdated;
 	private Action<GameShape> onStateChanged;
