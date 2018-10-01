@@ -13,10 +13,9 @@ public class GameShapeSpawnerController : MonoBehaviour
 	public GameShapeController shapeController;
 	public float startDelay;
 	public SpawnType spawnType;
+	public SpeedConfigController speedConfigController;
 	protected float delay = 1f;
 	protected GameSpawner[] spawners;
-	protected float speed = 0.6f;
-	protected float spawnSpeed = 0.5f;
 	protected float afterExplodeDelay = 0.5f;
 	protected float afterFinishDelay = 0.5f;
 	protected Action<GameShape> onShapeCreated;
@@ -40,7 +39,6 @@ public class GameShapeSpawnerController : MonoBehaviour
 	}
 
 	void LoadLevelConfig() {
-		
 	}
     
 	protected GameSpawner GetRandomEmptySpawner() {
@@ -65,7 +63,10 @@ public class GameShapeSpawnerController : MonoBehaviour
 
 		GameShapeType newShapeType = spawner.GetRandomShapeType();
 
-		GameShape shape = shapeController.CreateShape(newShapeType, spawner, speed, spawnSpeed);
+		float speed = speedConfigController.ShapeSpeed;
+		float spawnCurrentSpeed = speedConfigController.SpawnSpeed;
+
+		GameShape shape = shapeController.CreateShape(newShapeType, spawner, speed, spawnCurrentSpeed);
 
 		spawner.CurrentShapes++;
 
@@ -97,6 +98,8 @@ public class GameShapeSpawnerController : MonoBehaviour
 
     public void SetSpawnersConfig()
     {
+		SetSpeedConfig();
+
 		Vector3 vector3 = new Vector3(0.0f, 3,0);
 		GameShapeType[] types = { GameShapeType.CIRCLE, GameShapeType.SQUARE, GameShapeType.TRIANGLE };
 		GameSpawner spawnerModel1 = new GameSpawner(types, vector3);
@@ -167,5 +170,11 @@ public class GameShapeSpawnerController : MonoBehaviour
         {
             Invoke(SpawnShapeFunction, afterFinishDelay);
         }
+	}
+	protected void SetSpeedConfig() {
+        SpeedObject shapeObjSpeed = new SpeedObject(0.6f, 0.02f);
+        SpeedObject spawnObjSpeed = new SpeedObject(0.5f, 0.02f);
+
+		speedConfigController.SetConfig(shapeObjSpeed, spawnObjSpeed);
 	}
 }

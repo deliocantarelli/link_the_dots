@@ -19,6 +19,7 @@ public class TimeNoOverlapSpawnerController : GameShapeSpawnerController
             Debug.Log("this class is not supposed to use this type, please, change this component to GameShapeSpawnerController or some other!");
         }
 	}
+	override
 	protected void SetShapeStateChanged()
     {
 		onShapeStateChanged = TimeOrFinishShapeStateChanged;
