@@ -14,13 +14,14 @@ public class GameShapeSpawnerController : MonoBehaviour
 	public float startDelay;
 	public SpawnType spawnType;
 	public SpeedConfigController speedConfigController;
-	protected float delay = 1f;
+	protected float Delay { get { return speedConfigController.SpawnDelay; }}
 	protected GameSpawner[] spawners;
 	protected float afterExplodeDelay = 0.5f;
 	protected float afterFinishDelay = 0.5f;
 	protected Action<GameShape> onShapeCreated;
 	protected Action<GameSpawner[]> onSpawnersUpdated;
 
+	protected bool repeatSpawn = false;
 	protected String SpawnShapeFunction = "SpawnShape";
 
 	protected delegate void OnShapeStateChanged(GameShape shape);
@@ -74,6 +75,10 @@ public class GameShapeSpawnerController : MonoBehaviour
 		
 		if(onShapeCreated != null) {
 			onShapeCreated(shape);
+		}
+
+		if(repeatSpawn) {
+			Invoke(SpawnShapeFunction, Delay);
 		}
     }
     
@@ -145,7 +150,8 @@ public class GameShapeSpawnerController : MonoBehaviour
 	}
 
 	public void StartShapeSpawn(float toStartDelay) {
-		InvokeRepeating(SpawnShapeFunction, toStartDelay, delay);
+		repeatSpawn = true;
+		Invoke(SpawnShapeFunction, toStartDelay);
 	}
 
 
@@ -174,7 +180,8 @@ public class GameShapeSpawnerController : MonoBehaviour
 	protected void SetSpeedConfig() {
         SpeedObject shapeObjSpeed = new SpeedObject(0.6f, 0.02f);
         SpeedObject spawnObjSpeed = new SpeedObject(0.5f, 0.02f);
+		float spawnDistanceThreshold = 0.33f;
 
-		speedConfigController.SetConfig(shapeObjSpeed, spawnObjSpeed);
+		speedConfigController.SetConfig(shapeObjSpeed, spawnObjSpeed, spawnDistanceThreshold);
 	}
 }

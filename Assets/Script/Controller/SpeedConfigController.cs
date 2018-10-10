@@ -7,9 +7,11 @@ public class SpeedConfigController : MonoBehaviour
 
 	private SpeedObject _shapeSpeed;
 	private SpeedObject _spawnSpeed;
+	private float _spawnThreshold;
 
 	public float ShapeSpeed { get { return _shapeSpeed.CurrentSpeed; }}
 	public float SpawnSpeed { get { return _spawnSpeed.CurrentSpeed; }}
+	public float SpawnDelay { get { return 1 / SpawnSpeed + _spawnThreshold / _shapeSpeed.CurrentSpeed; }}
 
 	public float CurrentSpeed { get; private set; }
     // Use this for initialization
@@ -27,9 +29,10 @@ public class SpeedConfigController : MonoBehaviour
         }
     }
 
-	public void SetConfig(SpeedObject shapeSpeed, SpeedObject spawnSpeed) {
+	public void SetConfig(SpeedObject shapeSpeed, SpeedObject spawnSpeed, float distancePercToSpawn) {
 		_shapeSpeed = shapeSpeed;
 		_spawnSpeed = spawnSpeed;
+		_spawnThreshold = distancePercToSpawn;
 
 		configSet = true;
 	}

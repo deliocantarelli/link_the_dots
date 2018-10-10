@@ -36,7 +36,7 @@ public class TimeNoOverlapSpawnerController : GameShapeSpawnerController
         }
     }
 	private void CheckCanSpawn() {
-		if(currentDelay >= delay) {
+		if(currentDelay >= Delay) {
 			GameSpawner spawner = GetRandomEmptySpawner();
 			if(spawner != null) {
 				NoOverlapSpawn(spawner);
@@ -57,6 +57,6 @@ public class TimeNoOverlapSpawnerController : GameShapeSpawnerController
 	private void NoOverlapSpawn(GameSpawner spawner) {
         SpawnShape(spawner);
         currentDelay = 0;
-        Invoke(CheckSpawnShapeFunction, delay);
+        Invoke(CheckSpawnShapeFunction, Delay);
 	}
 }
