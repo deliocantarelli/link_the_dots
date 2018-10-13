@@ -1,0 +1,41 @@
+﻿{
+  "spawners": [
+    {
+      "position": [ 0, 3, 0 ],
+      "shapeTypes":  ["triangle", "square", "circle"]
+    },
+    {
+      "position": [ 2, 3, 0 ],
+      "shapeTypes": [ "triangle", "square", "circle" ]
+    },
+    {
+      "position": [ -2, 3, 0 ],
+      "shapeTypes": [ "triangle", "square", "circle" ]
+    }
+  ],
+  "pipeEnds": [
+    {
+      "position":[ 0, -3, 0 ],
+      "shapeType":"circle"
+    },
+    {
+      "position": [ 2, -3, 0 ],
+      "shapeType": "square"
+    },
+    {
+      "position": [ -2, -3, 0 ],
+      "shapeType": "triangle"
+    }
+  ],
+  "shapeSpeed": {
+    "startSpeed": 0.6,
+    "rate": 0.02
+  },
+  "spawnSpeed": {
+    "startSpeed": 0.5,
+    "rate": 0.02
+  },
+  "afterExplodeDelay": 0.6,
+  "afterFinishDelay": 0.6,
+  "distanceBeforeSpawningNext": 0.33
+}

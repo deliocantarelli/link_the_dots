@@ -6,6 +6,17 @@ public enum GameShapeType{
     SQUARE = 1,
     CIRCLE = 2
 }
+public static class GameShapeTypeMethods
+{
+
+	public static GameShapeType FromString(this GameShapeType typeEnum, string typeName)
+    {
+		typeName = typeName.ToUpper();
+		return (GameShapeType)System.Enum.Parse(typeof(GameShapeType), typeName);
+
+    }
+}
+
 
 public enum GameShapeState {
 	SPAWNING = 0,
