@@ -4,6 +4,8 @@ using System;
 
 public class GameController : MonoBehaviour
 {
+	public string levelFileName = "level_test";
+
 	public GamePipeEndController endPipeController;
 	public GameShapeSpawnerController spawnerController;
 	public GamePlumbingController plumbingController;
@@ -11,10 +13,15 @@ public class GameController : MonoBehaviour
 
 	private void Start()
 	{
-		spawnerController.SetSpawnersConfig();
-		endPipeController.SetEndPipeConfig();
+		GameConfig gameConfig = LevelLoader.LoadLevel(levelFileName);
+
+		spawnerController.SetSpawnersConfig(gameConfig);
+		endPipeController.SetEndPipeConfig(gameConfig);
 		//plumbingController.StartPipes(spawnerController.GetSpawners(), endPipeController.GetPipeEnds());
 		spawnerController.RegisterOnShapeCretedCB(OnGameShapeCreated);
+
+
+        
 	}
 
 	private void OnShapeCreated(GameShape shape) {

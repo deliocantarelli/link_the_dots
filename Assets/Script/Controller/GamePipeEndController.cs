@@ -17,24 +17,19 @@ public class GamePipeEndController : MonoBehaviour
 
     }
 
-	public void SetEndPipeConfig() {
-		GameShapeType type = GameShapeType.CIRCLE;
-        Vector3 vector3 = new Vector3(0f, -3f, 0);
-		GamePipeEnd pipeEnd1 = new GamePipeEnd(type, vector3);
-		vector3 = new Vector3(2f, -3f, 0);
+	public void SetEndPipeConfig(GameConfig gameConfig) {
+      
+		PipeEndConfig[] pipeEndConfigs = gameConfig.pipeEnds;
+		pipeEnds = new GamePipeEnd[pipeEndConfigs.Length];
 
-        type = GameShapeType.SQUARE;
-        GamePipeEnd pipeEnd2 = new GamePipeEnd(type, vector3);
-		vector3 = new Vector3(-2f, -3f, 0);
-
-		type = GameShapeType.TRIANGLE;
-		GamePipeEnd pipeEnd3 = new GamePipeEnd(type, vector3);
-
-		GamePipeEnd[] pipeEndArray = { pipeEnd1, pipeEnd2, pipeEnd3 };
-		pipeEnds = pipeEndArray;
+		for (int index = pipeEndConfigs.Length-1; index >= 0; index--)
+        {
+			PipeEndConfig config = pipeEndConfigs[index];
+			pipeEnds[index] = new GamePipeEnd(config.shapeType, config.position);
+        }
 
 		if(onPipeEndAdded != null) {
-			foreach(GamePipeEnd pipeEnd in pipeEndArray) {
+			foreach(GamePipeEnd pipeEnd in pipeEnds) {
 				onPipeEndAdded(pipeEnd);
             }
         }

@@ -1,11 +1,26 @@
-﻿[System.Serializable]
+﻿using UnityEngine;
+
+public class SpawnerConfig {
+    public Vector3 position;
+	public GameShapeType[] shapeTypes;
+}
+public class PipeEndConfig {
+	public Vector3 position;
+	public GameShapeType shapeType;
+}
+public class SpeedConfig {
+    public float startSpeed;
+    public float endSpeed;
+    public float rate;
+}
+
 public class GameConfig
 {
-	public readonly SpawnerConfig[] spawners;
-	public readonly PipeEndConfig[] pipeEnds;
-	public readonly SpeedConfig shapeSpeed;
-	public readonly SpeedConfig spawnSpeed;
-	public readonly float afterExplodeDelay = 0.5f;
-	public readonly float afterFinishDelay = 0.5f;
-	public readonly float distanceBeforeSpawningNext = 0.33f;
+    public SpawnerConfig[] spawners;
+    public PipeEndConfig[] pipeEnds;
+    public SpeedConfig shapeSpeed;
+    public SpeedConfig spawnSpeed;
+    public float afterExplodeDelay = 0.5f;
+    public float afterFinishDelay = 0.5f;
+    public float distanceBeforeSpawningNext = 0.33f;
 }

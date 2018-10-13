@@ -8,12 +8,11 @@ public enum GameShapeType{
 }
 public static class GameShapeTypeMethods
 {
-
-	public static GameShapeType FromString(this GameShapeType typeEnum, string typeName)
+    
+	public static GameShapeType ToGameShapeType(this String typeName)
     {
 		typeName = typeName.ToUpper();
 		return (GameShapeType)System.Enum.Parse(typeof(GameShapeType), typeName);
-
     }
 }
 

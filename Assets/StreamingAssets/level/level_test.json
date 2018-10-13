@@ -1,22 +1,22 @@
 ﻿{
   "spawners": [
-    {
-      "position": [ 0, 3, 0 ],
-      "shapeTypes":  ["triangle", "square", "circle"]
-    },
-    {
-      "position": [ 2, 3, 0 ],
-      "shapeTypes": [ "triangle", "square", "circle" ]
-    },
-    {
-      "position": [ -2, 3, 0 ],
-      "shapeTypes": [ "triangle", "square", "circle" ]
-    }
+      {
+        "position": [ 0, 3, 0 ],
+        "shapeTypes": [ "triangle", "square", "circle" ]
+      },
+      {
+        "position": [ 2, 3, 0 ],
+        "shapeTypes": [ "triangle", "square", "circle" ]
+      },
+      {
+        "position": [ -2, 3, 0 ],
+        "shapeTypes": [ "triangle", "square", "circle" ]
+      }
   ],
   "pipeEnds": [
     {
-      "position":[ 0, -3, 0 ],
-      "shapeType":"circle"
+      "position": [ 0, -3, 0 ],
+      "shapeType": "circle"
     },
     {
       "position": [ 2, -3, 0 ],

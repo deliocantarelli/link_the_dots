@@ -10,18 +10,17 @@ public enum GameSpeedType
 
 public class SpeedObject
 {
-    private bool configSet = false;
     private float startSpeed;
     private float endSpeed;
     private float increaseRate;
 	private GameSpeedType speedMode;
 
-	public SpeedObject(float _startSpeed, float _increaseRate, float _endSpeed = -1)
+	public SpeedObject(float _startSpeed, float _increaseRate, float _endSpeed = float.NegativeInfinity)
     {
         startSpeed = _startSpeed;
         CurrentSpeed = _startSpeed;
 
-        if (Mathf.Approximately(-1.0F, _endSpeed))
+		if (_endSpeed == float.NegativeInfinity || _endSpeed == float.PositiveInfinity)
         {
 			speedMode = GameSpeedType.ENDLESS;
         }

@@ -38,9 +38,6 @@ public class GameShapeSpawnerController : MonoBehaviour
 	{
 		
 	}
-
-	void LoadLevelConfig() {
-	}
     
 	protected GameSpawner GetRandomEmptySpawner() {
 		ArrayList empties = new ArrayList();
@@ -101,22 +98,20 @@ public class GameShapeSpawnerController : MonoBehaviour
 
     }
 
-    public void SetSpawnersConfig()
+	public void SetSpawnersConfig(GameConfig gameConfig)
     {
-		SetSpeedConfig();
+		SetSpeedConfig(gameConfig);
 
-		Vector3 vector3 = new Vector3(0.0f, 3,0);
-		GameShapeType[] types = { GameShapeType.CIRCLE, GameShapeType.SQUARE, GameShapeType.TRIANGLE };
-		GameSpawner spawnerModel1 = new GameSpawner(types, vector3);
-        vector3 = new Vector3(2f, 3, 0);
-        
-		GameSpawner spawnerModel2 = new GameSpawner(types, vector3);
-        vector3 = new Vector3(-2f, 3, 0);
-        
-		GameSpawner spawnerModel3 = new GameSpawner(types, vector3);
+		afterExplodeDelay = gameConfig.afterExplodeDelay;
+		afterFinishDelay = gameConfig.afterFinishDelay;
 
-		GameSpawner[] spawnersModel = { spawnerModel1, spawnerModel2, spawnerModel3 };
-		spawners = spawnersModel;
+		SpawnerConfig[] spawnersConfig = gameConfig.spawners;
+		spawners = new GameSpawner[spawnersConfig.Length];
+
+		for (int index = spawnersConfig.Length-1; index >= 0; index --) {
+			SpawnerConfig config = spawnersConfig[index];
+			spawners[index] = new GameSpawner(config.shapeTypes, config.position);
+		}
 
 		if(onSpawnersUpdated != null) {
 			onSpawnersUpdated(spawners);
@@ -177,10 +172,10 @@ public class GameShapeSpawnerController : MonoBehaviour
             Invoke(SpawnShapeFunction, afterFinishDelay);
         }
 	}
-	protected void SetSpeedConfig() {
-        SpeedObject shapeObjSpeed = new SpeedObject(0.6f, 0.02f);
-        SpeedObject spawnObjSpeed = new SpeedObject(0.5f, 0.02f);
-		float spawnDistanceThreshold = 0.33f;
+	protected void SetSpeedConfig(GameConfig config) {
+		SpeedObject shapeObjSpeed = new SpeedObject(config.shapeSpeed.startSpeed, config.shapeSpeed.rate, config.shapeSpeed.endSpeed);
+		SpeedObject spawnObjSpeed = new SpeedObject(config.spawnSpeed.startSpeed, config.spawnSpeed.rate, config.spawnSpeed.endSpeed);
+		float spawnDistanceThreshold = config.distanceBeforeSpawningNext;
 
 		speedConfigController.SetConfig(shapeObjSpeed, spawnObjSpeed, spawnDistanceThreshold);
 	}
